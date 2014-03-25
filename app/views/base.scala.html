@@ -1,0 +1,22 @@
+@(title: String, scripts: Html = Html(""))(content: Html)
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>@title</title>
+        <!-- Bootstrap CSS -->
+        <link href='@routes.Assets.at("css/bootstrap.min.css")' rel="stylesheet">
+        <!-- Bootstrap Theme CSS -->
+        <link href='@routes.Assets.at("css/bootstrap-theme.min.css")' rel="stylesheet">
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/png" href='@routes.Assets.at("img/favicon.png")'>
+    </head>
+    <body>
+        @content
+        <!-- jQuery JS -->
+        <script src='@routes.Assets.at("js/jquery-2.1.0.min.js")'></script>
+        <!-- Bootstrap JS -->
+        <script src='@routes.Assets.at("js/bootstrap.min.js")'></script>
+        @scripts
+    </body>
+</html>
