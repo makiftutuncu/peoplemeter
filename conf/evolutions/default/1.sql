@@ -78,6 +78,11 @@ CREATE TABLE users (
     button_number int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE sessions (
+    id char(32) NOT NULL PRIMARY KEY,
+    user_id int unsigned NOT NULL UNIQUE
+) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+
 # --- !Downs
 DROP TABLE user_contact_infos;
 DROP TABLE family_member_types;
@@ -92,3 +97,4 @@ DROP TABLE records;
 DROP TABLE channels;
 DROP TABLE surveys;
 DROP TABLE users;
+DROP TABLE sessions;

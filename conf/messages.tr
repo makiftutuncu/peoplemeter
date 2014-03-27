@@ -1,0 +1,5 @@
+# --- Form doğrulama hataları
+error.required=Gerekli
+error.minLength=En az {0} karakter
+error.maxLength=En fazla {0} karakter
+error.email=Geçerli bir e-posta adresi olmalı
