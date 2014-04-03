@@ -17,11 +17,11 @@ import utilities.Generators
 case class Account(id: Long, email: String, password: String)
 
 /**
- * Companion object of Account acting as data access layer
+ * Companion object of [[models.Account]] acting as data access layer
  */
 object Account {
   /**
-   * A result set parser for account records in database, maps records to an Account object
+   * A result set parser for account records in database, maps records to a [[models.Account]] object
    */
   val accountParser = {
     get[Long]("id") ~ get[String]("email") ~ get[String]("password") map {
@@ -78,7 +78,7 @@ object Account {
     }
     catch {
       case e: Exception =>
-        Logger.error(s"Account.read() - Account reading failed for id $id, ${e.getMessage}")
+        Logger.error(s"Account.read() - Account reading failed for $id, ${e.getMessage}")
         None
     }
   }
@@ -103,6 +103,27 @@ object Account {
       case e: Exception =>
         Logger.error(s"Account.read() - Account reading failed for $email, ${e.getMessage}")
         None
+    }
+  }
+
+  /**
+   * Deletes an account with given id from the database
+   *
+   * @param id  Id of the account
+   *
+   * @return    true if successfully deleted, false if any error occurs
+   */
+  def delete(id: Long): Boolean = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL("""delete from accounts where id={id}""")
+          .on("id" -> id).executeUpdate() > 0
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Account.delete() - Account deleting failed for $id, ${e.getMessage}")
+        false
     }
   }
 }

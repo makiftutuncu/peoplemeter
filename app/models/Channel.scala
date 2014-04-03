@@ -17,11 +17,11 @@ import play.api.Play.current
 case class Channel(id: Long, name: String, logoFilePath: String)
 
 /**
- * Companion object of Channel acting as data access layer
+ * Companion object of [[models.Channel]] acting as data access layer
  */
 object Channel {
   /**
-   * A result set parser for channel records in database, maps records to an Channel object
+   * A result set parser for channel records in database, maps records to a [[models.Channel]] object
    */
   val channelParser = {
     get[Long]("id") ~ get[String]("name") ~ get[String]("logo_file_path") map {
@@ -30,7 +30,7 @@ object Channel {
   }
 
   /**
-   * Creates an channel with given information and inserts it to the database
+   * Creates a channel with given information and inserts it to the database
    *
    * @param name          Email address of the channel
    * @param logoFilePath  Path to logo image of the channel
@@ -76,8 +76,29 @@ object Channel {
     }
     catch {
       case e: Exception =>
-        Logger.error(s"Channel.read() - Channel reading failed with id $id, ${e.getMessage}")
+        Logger.error(s"Channel.read() - Channel reading failed for $id, ${e.getMessage}")
         None
+    }
+  }
+
+  /**
+   * Deletes a channel with given id from the database
+   *
+   * @param id  Id of the channel
+   *
+   * @return    true if successfully deleted, false if any error occurs
+   */
+  def delete(id: Long): Boolean = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL("""delete from channels where id={id}""")
+          .on("id" -> id).executeUpdate() > 0
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Channel.delete() - Channel deleting failed for $id, ${e.getMessage}")
+        false
     }
   }
 }

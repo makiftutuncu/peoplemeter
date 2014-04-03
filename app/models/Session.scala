@@ -16,7 +16,7 @@ import play.api.Play.current
 case class Session(id: String, accountId: Long)
 
 /**
- * Companion object acting as data access layer
+ * Companion object of [[models.Session]] acting as data access layer
  */
 object Session {
   /**
@@ -29,7 +29,7 @@ object Session {
   }
 
   /**
-   * Creates a new session and inserts it to the database
+   * Creates a session and inserts it to the database
    *
    * @param accountId Id of the account
    *

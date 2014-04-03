@@ -16,7 +16,7 @@ CREATE TABLE people (
     id int(10) unsigned NOT NULL UNIQUE AUTO_INCREMENT,
     name varchar(128) NOT NULL,
     birth_date date NOT NULL,
-    gender tinyint(1) NOT NULL,
+    is_male tinyint(1) NOT NULL,
     house_id int(10) unsigned NOT NULL,
     button_number tinyint(4) NOT NULL,
     PRIMARY KEY (id)
