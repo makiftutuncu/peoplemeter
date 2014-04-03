@@ -4,8 +4,7 @@ package utilities
  * A helper model containing user and session information
  *
  * @param sessionId Id of the session
- * @param userId    Id of the user to which session belongs
- * @param username  Username of the user
+ * @param accountId Id of the account to which session belongs
  * @param email     E-mail address of the user
  */
-case class Context(sessionId: String, userId: Long, username: String, email: String)
+case class Context(sessionId: String, accountId: Long, email: String)

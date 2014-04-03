@@ -10,10 +10,10 @@ import play.api.Play.current
 /**
  * Model of a session
  *
- * @param id      Id of the session
- * @param userId  Id of the user to which session belongs
+ * @param id        Id of the session
+ * @param accountId Id of the account to which session belongs
  */
-case class Session(id: String, userId: Long)
+case class Session(id: String, accountId: Long)
 
 /**
  * Companion object acting as data access layer
@@ -23,37 +23,37 @@ object Session {
    * A result set parser for session records in database, maps records to a [[models.Session]]
    */
   val sessionParser = {
-    get[String]("id") ~ get[Long]("user_id") map {
-      case id ~ userId => Session(id, userId)
+    get[String]("id") ~ get[Long]("account_id") map {
+      case id ~ accountId => Session(id, accountId)
     }
   }
 
   /**
    * Creates a new session and inserts it to the database
    *
-   * @param userId  Id of the user
+   * @param accountId Id of the account
    *
-   * @return        Inserted [[models.Session]] optionally if successful, None if any error occurs
+   * @return          Inserted [[models.Session]] optionally if successful, None if any error occurs
    */
-  def create(userId: Long): Option[Session] = {
+  def create(accountId: Long): Option[Session] = {
     try {
       val id = Generators.generateUUID
       DB.withConnection { implicit c =>
         val insertResult: Int = SQL(
-          """insert into sessions (id, user_id)
-             values ({id}, {userId})""")
-          .on("id" -> id, "userId" -> userId).executeUpdate()
+          """insert into sessions (id, account_id)
+             values ({id}, {accountId})""")
+          .on("id" -> id, "accountId" -> accountId).executeUpdate()
         if(insertResult > 0)
-          Option(Session(id, userId))
+          Option(Session(id, accountId))
         else {
-          Logger.error(s"Session.create() - Session creation failed for $userId, cannot insert!")
+          Logger.error(s"Session.create() - Session creation failed for $accountId, cannot insert!")
           None
         }
       }
     }
     catch {
       case e: Exception =>
-        Logger.error(s"Session.create() - Session creation failed for $userId, ${e.getMessage}")
+        Logger.error(s"Session.create() - Session creation failed for $accountId, ${e.getMessage}")
         None
     }
   }
@@ -69,8 +69,8 @@ object Session {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, user_id from sessions
-             where id={id} limit 1""").on("id" -> id).as(sessionParser *).headOption
+          """select id, account_id from sessions
+             where id={id} limit 1""").on("id" -> id).as(sessionParser singleOpt)
       }
     }
     catch {
@@ -81,23 +81,23 @@ object Session {
   }
 
   /**
-   * Reads a session with given user id from the database
+   * Reads a session with given account id from the database
    *
-   * @param userId  Id of the user to which session belongs
+   * @param accountId Id of the user to which session belongs
    *
-   * @return        An optional [[models.Session]] if found, None if not found
+   * @return          An optional [[models.Session]] if found, None if not found
    */
-  def read(userId: Long): Option[Session] = {
+  def read(accountId: Long): Option[Session] = {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, user_id from sessions
-             where user_id={userId} limit 1""").on("userId" -> userId).as(sessionParser *).headOption
+          """select id, account_id from sessions
+             where account_id={accountId} limit 1""").on("accountId" -> accountId).as(sessionParser singleOpt)
       }
     }
     catch {
       case e: Exception =>
-        Logger.error(s"Session.read() - Session reading failed for $userId, ${e.getMessage}")
+        Logger.error(s"Session.read() - Session reading failed for $accountId, ${e.getMessage}")
         None
     }
   }
