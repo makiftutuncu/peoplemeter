@@ -80,7 +80,7 @@ object Account {
     }
     catch {
       case e: Exception =>
-        Logger.error(s"Account.read() - Account reading failed with id id, ${e.getMessage}")
+        Logger.error(s"Account.read() - Account reading failed with id $id, ${e.getMessage}")
         None
     }
   }
