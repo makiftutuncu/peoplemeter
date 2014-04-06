@@ -62,7 +62,7 @@ object Channel {
   /**
    * Reads an channel by given id from the database
    *
-   * @param id  Id of the channel which is an auto incremented number
+   * @param id  Id of the channel
    *
    * @return    An optional [[models.Channel]] if successful, None if any error occurs
    */

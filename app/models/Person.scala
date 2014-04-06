@@ -71,7 +71,7 @@ object Person {
   /**
    * Reads a person by given id from the database
    *
-   * @param id  Id of the person which is an auto incremented number
+   * @param id  Id of the person
    *
    * @return    An optional [[models.Person]] if successful, None if any error occurs
    */

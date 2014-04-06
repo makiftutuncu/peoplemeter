@@ -64,7 +64,7 @@ object Account {
   /**
    * Reads an account by given id from the database
    *
-   * @param id  Id of the account which is an auto incremented number
+   * @param id  Id of the account
    *
    * @return    An optional [[models.Account]] if successful, None if any error occurs
    */
