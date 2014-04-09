@@ -57,7 +57,7 @@ object Login extends Controller {
    */
   private def giveFormError(logMsg: String, formErrorMsg: String): SimpleResult = {
     Logger.error(logMsg)
-    BadRequest
+    BadRequest(views.html.login())
   }
 
   /**
@@ -69,7 +69,7 @@ object Login extends Controller {
    */
   private def giveError(logMsg: String): SimpleResult = {
     Logger.error(logMsg)
-    Redirect(routes.Application.main())
+    Redirect(routes.Application.index())
   }
 }
 

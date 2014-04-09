@@ -1,3 +1,4 @@
+@(content: Html = Html(""))
 @base(title = "Peoplemeter") {
 
 @navbar()
@@ -13,7 +14,7 @@
 
         </div>
         <div class="col-md-9">
-            Welcome!
+            @content
         </div>
     </div>
 </div>
