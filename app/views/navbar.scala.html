@@ -1,9 +1,9 @@
+@(title: String = "Peoplemeter")(content: Html = Html(""))
 <header class="navbar navbar-default navbar-static-top" role="banner">
     <div class="container">
         <div class="navbar-header">
-
-            <a href="/" class="navbar-brand">Peoplemeter</a>
+            <a href="@routes.Application.index" class="navbar-brand">@title</a>
         </div>
-        <p class="navbar-text navbar-right"><button data-toggle="modal" id="loginBtn" class="navbar-link">Login</button></p>
+        @content
     </div>
 </header>

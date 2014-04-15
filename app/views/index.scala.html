@@ -1,21 +1,9 @@
-@(content: Html = Html(""))
-@base(title = "Peoplemeter") {
-
-@navbar()
-
-
-<div class="container">
-
-    <div class="row">
-
-        <div class="col-md-3" id="leftCol">
-
-            @sidebar()
-
-        </div>
-        <div class="col-md-9">
-            @content
-        </div>
-    </div>
+@(context: utilities.Context)
+@indexNavbarContent = {
+<div class="navbar-right">
+    <p class="navbar-text">Welcome @context.email!</p>
 </div>
+}
+@pageWithSidebar(navbarContent = indexNavbarContent) {
+Welcome to index!
 }

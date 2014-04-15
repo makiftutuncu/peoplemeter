@@ -1,25 +1,33 @@
-@index {
-<div class="row">
+@()(implicit flash: Flash)
+@loginStyles = {
+<!-- Login CSS -->
+<link href='@routes.Assets.at("css/login.css")' rel="stylesheet">
+}
+@pageWithNavbar(styles = loginStyles) {
+<div class="row col-md-4 col-md-offset-4">
     <div class="panel panel-primary">
         <!-- Title -->
-        <div class="panel-heading dialog-title">
-            Login
+        <div class="panel-heading">
+            You Need to Login
         </div>
         <div class="panel-body">
             <form action='@routes.Login.submit' method="post">
                 <div class="col-md-10 col-md-offset-1">
-                    <div class="row row-with-margin">
+                    <div class="row login-form-row">
                         <input name="email" type="email" class="form-control" placeholder="Email" required>
                     </div>
-                    <div class="row row-with-margin">
+                    <div class="row login-form-row">
                         <input name="password" type="password" class="form-control" placeholder="Password" required>
                     </div>
-                    <div class="row row-with-margin">
+                    <div class="row login-form-row login-btn">
                         <button class="btn btn-primary" type="submit">Login</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+    @flash.get("loginError").map { loginError =>
+    <div class="row alert alert-danger">@loginError</div>
+    }
 </div>
 }

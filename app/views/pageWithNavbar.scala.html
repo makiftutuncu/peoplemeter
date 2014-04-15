@@ -1,0 +1,9 @@
+@(title: String = "Peoplemeter", scripts: Html = Html(""), styles: Html = Html(""), navbarContent: Html = Html(""))(content: Html)
+@base(title = title, scripts = scripts, styles = styles) {
+    @navbar() {
+    @navbarContent
+    }
+    <div class="container">
+        @content
+    </div>
+}
