@@ -11,7 +11,7 @@ object Application extends Controller {
                           errorMessage = if(request.flash.get("error.authentication").isDefined)
                                             Messages("error.authentication")
                                          else "",
-                          sidebarItems = SidebarItems.activate("Home")))
+                          sidebarItems = SidebarItems.activate("Index")))
     } getOrElse {
       Redirect(routes.Login.renderPage())
     }

@@ -15,7 +15,7 @@ case class SidebarItem(link: Call, icon: String, text: String, isActive: Boolean
 
 object SidebarItems {
   val items: List[SidebarItem] = List(
-    SidebarItem(routes.Application.index(), "glyphicon-home", "Home", isActive = false),
+    SidebarItem(routes.Application.index(), "glyphicon-home", "Index", isActive = false),
     SidebarItem(routes.Houses.renderPage(), "glyphicon-th-large", "Houses", isActive = false),
     SidebarItem(routes.People.renderPage(), "glyphicon-user", "People", isActive = false),
     SidebarItem(routes.Channels.renderPage(), "glyphicon-list", "Channels", isActive = false),
