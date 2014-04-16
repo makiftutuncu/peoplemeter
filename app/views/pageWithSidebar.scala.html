@@ -1,18 +1,26 @@
-@(title: String = "Peoplemeter", scripts: Html = Html(""), styles: Html = Html(""), navbarContent: Html = Html(""))(content: Html)
+@(title: String = "Peoplemeter", scripts: Html = Html(""), styles: Html = Html(""), navbarContent: Html = Html(""), sidebarItems: List[utilities.SidebarItem] = Nil)(content: Html)
+@sidebarItem(link: String, icon: String, text: String, isActive: Boolean) = {
+<li @if(isActive) {class="active"} ><a href="@link"><span class="glyphicon @icon"></span>&nbsp;@text</a></li>
+}
 @pageWithNavbar(title = title, scripts = scripts, styles = styles, navbarContent = navbarContent) {
 <div class="row">
     <div class="col-md-3">
-        <div class="well">
-            <ul class="nav nav-stacked">
-                <li><a href="#sec1">Houses</a></li>
-                <li><a href="#sec2">People</a></li>
-                <li><a href="#sec3">Channels</a></li>
-                <li><a href="#sec4">Stats</a></li>
-            </ul>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked">
+                    @for(item <- sidebarItems) {
+                    @sidebarItem(item.link.url, item.icon, item.text, item.isActive)
+                    }
+                </ul>
+            </div>
         </div>
     </div>
     <div class="col-md-9">
-        @content
+        <div class="panel panel-default">
+            <div class="panel-body">
+                @content
+            </div>
+        </div>
     </div>
 </div>
 }

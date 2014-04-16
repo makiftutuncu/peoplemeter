@@ -1,13 +1,8 @@
-@(context: utilities.Context, errorMessage: String = "")
-@indexNavbarContent = {
-<form action="@routes.Logout.logout" method="post" class="navbar-form navbar-right"><input type="submit" class="btn btn-default" value="Logout"></form>
-<div class="navbar-right">
-    <p class="navbar-text">Welcome @context.email!</p>
-</div>
-}
-@pageWithSidebar(navbarContent = indexNavbarContent) {
+@(context: utilities.Context, errorMessage: String = "", sidebarItems: List[utilities.SidebarItem] = Nil)
+@contentPage(context = context, sidebarItems = sidebarItems) {
 @if(!errorMessage.isEmpty) {
 <div class="row alert alert-danger error-message">@errorMessage</div>
 }
-Welcome to index!
+<h2>Welcome!</h2>
+<p>This is Peoplemeter Web Panel.</p>
 }

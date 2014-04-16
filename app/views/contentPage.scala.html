@@ -1,0 +1,10 @@
+@(context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)(content: Html = Html(""))
+@indexNavbarContent = {
+<form action="@routes.Logout.logout" method="post" class="navbar-form navbar-right"><input type="submit" class="btn btn-default" value="Logout"></form>
+<div class="navbar-right">
+    <p class="navbar-text">Welcome @context.email!</p>
+</div>
+}
+@pageWithSidebar(navbarContent = indexNavbarContent, sidebarItems = sidebarItems) {
+@content
+}
