@@ -1,5 +1,5 @@
-# --- Form validation messages
 error.required=Required
 error.minLength=Minimum {0} characters
 error.maxLength=Maximum {0} characters
 error.email=Should be a valid email address
+error.authentication=You don't have permission to view this content!

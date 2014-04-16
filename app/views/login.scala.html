@@ -1,7 +1,10 @@
-@()(implicit flash: Flash)
+@(loginForm: Form[LoginFormAccount], errorMessage: String = "")
 @loginStyles = {
 <!-- Login CSS -->
 <link href='@routes.Assets.at("css/login.css")' rel="stylesheet">
+}
+@formErrorToString(error: FormError) = {
+@Messages(error.message, error.args:_*)
 }
 @pageWithNavbar(styles = loginStyles) {
 <div class="row col-md-4 col-md-offset-4">
@@ -15,9 +18,15 @@
                 <div class="col-md-10 col-md-offset-1">
                     <div class="row login-form-row">
                         <input name="email" type="email" class="form-control" placeholder="Email" required>
+                        @if(loginForm.hasErrors && !loginForm.error("email").isEmpty) {
+                        <p class="login-form-error">@loginForm.errors("email").map(e => formErrorToString(e)).mkString(", ")</p>
+                        }
                     </div>
                     <div class="row login-form-row">
                         <input name="password" type="password" class="form-control" placeholder="Password" required>
+                        @if(loginForm.hasErrors && !loginForm.errors("password").isEmpty) {
+                        <p class="login-form-error">@loginForm.errors("password").map(e => formErrorToString(e)).mkString(", ")</p>
+                        }
                     </div>
                     <div class="row login-form-row login-btn">
                         <button class="btn btn-primary" type="submit">Login</button>
@@ -26,8 +35,8 @@
             </form>
         </div>
     </div>
-    @flash.get("loginError").map { loginError =>
-    <div class="row alert alert-danger">@loginError</div>
+    @if(!errorMessage.isEmpty) {
+    <div class="row alert alert-danger error-message">@errorMessage</div>
     }
 </div>
 }
