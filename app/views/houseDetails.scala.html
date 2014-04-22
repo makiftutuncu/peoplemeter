@@ -1,4 +1,79 @@
 @(house: Option[models.House] = None, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 @contentPage(context = context, sidebarItems = sidebarItems) {
-Editing house #@house.get.id
+
+<form class="form-horizontal" action="" method="post">
+    <fieldset>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="familyName">Family Name</label>
+
+            <div class="col-md-9">
+                <input id="familyName" name="familyName" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="district">District</label>
+
+            <div class="col-md-9">
+                <input id="district" name="district" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="street">Street</label>
+
+            <div class="col-md-9">
+                <input id="street" name="street" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="buildingName">Building Name</label>
+
+            <div class="col-md-9">
+                <input id="buildingName" name="buildingName" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="doorNumber">Door Number</label>
+
+            <div class="col-md-9">
+                <input id="doorNumber" name="doorNumber" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="postalCode">Postal Code</label>
+
+            <div class="col-md-9">
+                <input id="postalCode" name="postalCode" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="town">Town</label>
+
+            <div class="col-md-9">
+                <input id="town" name="town" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="city">City</label>
+
+            <div class="col-md-9">
+                <input id="city" name="city" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-11 text-right">
+                <button type="submit" class="btn btn-primary">Delete</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
 }
