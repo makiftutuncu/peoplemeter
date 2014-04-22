@@ -16,9 +16,16 @@ GET     /houses/:id                 controllers.Houses.renderEditHousePage(id: L
 GET     /addHouse                   controllers.Houses.renderAddHousePage
 POST    /addHouse                   controllers.Houses.addHouse
 POST    /editHouse/:id              controllers.Houses.editHouse(id: Long)
-POST    /deleteHouse/:id              controllers.Houses.deleteHouse(id: Long)
+POST    /deleteHouse/:id            controllers.Houses.deleteHouse(id: Long)
 
+# People stuff
 GET     /people                     controllers.People.renderPage
+GET     /people/:id                 controllers.People.renderEditPersonPage(id: Long)
+GET     /addPerson                  controllers.People.renderAddPersonPage
+POST    /addPerson                  controllers.People.addPerson
+POST    /editPerson/:id             controllers.People.editPerson(id: Long)
+POST    /deletePerson/:id           controllers.People.deletePerson(id: Long)
+
 GET     /channels                   controllers.Channels.renderPage
 GET     /stats                      controllers.Stats.renderPage
 

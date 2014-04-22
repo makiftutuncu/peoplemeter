@@ -93,6 +93,59 @@ object Person {
   }
 
   /**
+   * Reads list of people from the database
+   *
+   * @return    A list of [[models.Person]] if successful, Nil if not found or any error occurs
+   */
+  def read: List[Person] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL("""select id, name, birth_date, is_male, house_id, button_number from people""").as(personParser *)
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Person.read() - Person reading failed, ${e.getMessage}")
+        Nil
+    }
+  }
+
+  /**
+   * Updates a person with given information on the database
+   *
+   * @param id            Id of the person which is an auto incremented number
+   * @param name          Name of the person
+   * @param birthDate     Birth date of the person
+   * @param isMale        Gender of the person, male if true, female if false
+   * @param houseId       Id of house of the person
+   * @param buttonNumber  Button number of the person on the remote controller
+   *
+   * @return              true if successful, false if any error occurs
+   */
+  def update(id: Long, name: String, birthDate: Date, isMale: Boolean, houseId: Long, buttonNumber: Int): Boolean = {
+    try {
+      DB.withConnection { implicit c =>
+        val affectedRows = SQL(
+          """update people
+             set name={name}, birth_date={birthDate}, is_male={isMale}, house_id={houseId}, button_number={buttonNumber})
+             where id={id}""")
+          .on("id" -> id, "name" -> name, "birthDate" -> birthDate, "isMale" -> isMale, "houseId" -> houseId, "buttonNumber" -> buttonNumber)
+          .executeUpdate()
+        val result: Boolean = affectedRows > 0
+        if(!result) {
+          Logger.error(s"Person.update() - Person update failed for id $id, cannot update!")
+        }
+        result
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Person.update() - Person update failed for id $id, ${e.getMessage}")
+        false
+    }
+  }
+
+  /**
    * Deletes a person with given id from the database
    *
    * @param id  Id of the person
