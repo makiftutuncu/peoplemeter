@@ -10,9 +10,12 @@ POST    /login                      controllers.Login.submit
 
 POST    /logout                     controllers.Logout.logout
 
+# House stuff
 GET     /houses                     controllers.Houses.renderPage
-GET     /houses/:id                 controllers.Houses.editHouse(id: Long)
-GET     /houses/add                 controllers.Houses.addHouse
+GET     /houses/:id                 controllers.Houses.renderEditHousePage(id: Long)
+GET     /addHouse                   controllers.Houses.renderAddHousePage
+POST    /addHouse                   controllers.Houses.addHouse
+POST    /editHouse/:id              controllers.Houses.editHouse(id: Long)
 
 GET     /people                     controllers.People.renderPage
 GET     /channels                   controllers.Channels.renderPage

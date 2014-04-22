@@ -1,13 +1,27 @@
-@(house: Option[models.House] = None, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
-@contentPage(context = context, sidebarItems = sidebarItems) {
+@(house: Option[models.House] = None, isAddingHouse: Boolean = false, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 
-<form class="form-horizontal" action="" method="post">
+@getFamilyName() = {@if(!house.isEmpty) {@house.get.familyName} else {}}
+@getDistrict() = {@if(!house.isEmpty) {@house.get.district} else {}}
+@getStreet() = {@if(!house.isEmpty) {@house.get.street} else {}}
+@getBuildingName() = {@if(!house.isEmpty) {@house.get.buildingName} else {}}
+@getDoorNumber() = {@if(!house.isEmpty) {@house.get.doorNumber} else {}}
+@getPostalCode() = {@if(!house.isEmpty) {@house.get.postalCode} else {}}
+@getTown() = {@if(!house.isEmpty) {@house.get.town} else {}}
+@getCity() = {@if(!house.isEmpty) {@house.get.city} else {}}
+
+@getFormAction() = {@if(isAddingHouse) {@routes.Houses.addHouse} else {@routes.Houses.editHouse(house.get.id)}}
+
+@contentPage(context = context, sidebarItems = sidebarItems) {
+@if(!isAddingHouse && house.isEmpty) {
+<h4>Invalid house, cannot edit!</h4>
+} else {
+<form class="form-horizontal" action="@getFormAction()" method="post">
     <fieldset>
         <div class="form-group">
             <label class="col-md-2 control-label" for="familyName">Family Name</label>
 
             <div class="col-md-9">
-                <input id="familyName" name="familyName" type="text" class="form-control">
+                <input id="familyName" name="familyName" type="text" class="form-control" value="@getFamilyName()" required>
             </div>
         </div>
 
@@ -15,7 +29,7 @@
             <label class="col-md-2 control-label" for="district">District</label>
 
             <div class="col-md-9">
-                <input id="district" name="district" type="text" class="form-control">
+                <input id="district" name="district" type="text" class="form-control" value="@getDistrict()" required>
             </div>
         </div>
 
@@ -23,7 +37,7 @@
             <label class="col-md-2 control-label" for="street">Street</label>
 
             <div class="col-md-9">
-                <input id="street" name="street" type="text" class="form-control">
+                <input id="street" name="street" type="text" class="form-control" value="@getStreet()" required>
             </div>
         </div>
 
@@ -31,7 +45,7 @@
             <label class="col-md-2 control-label" for="buildingName">Building Name</label>
 
             <div class="col-md-9">
-                <input id="buildingName" name="buildingName" type="text" class="form-control">
+                <input id="buildingName" name="buildingName" type="text" class="form-control" value="@getBuildingName()" required>
             </div>
         </div>
 
@@ -39,7 +53,7 @@
             <label class="col-md-2 control-label" for="doorNumber">Door Number</label>
 
             <div class="col-md-9">
-                <input id="doorNumber" name="doorNumber" type="text" class="form-control">
+                <input id="doorNumber" name="doorNumber" type="text" class="form-control" value="@getDoorNumber()" required>
             </div>
         </div>
 
@@ -47,7 +61,7 @@
             <label class="col-md-2 control-label" for="postalCode">Postal Code</label>
 
             <div class="col-md-9">
-                <input id="postalCode" name="postalCode" type="text" class="form-control">
+                <input id="postalCode" name="postalCode" type="text" class="form-control" value="@getPostalCode()" required>
             </div>
         </div>
 
@@ -55,7 +69,7 @@
             <label class="col-md-2 control-label" for="town">Town</label>
 
             <div class="col-md-9">
-                <input id="town" name="town" type="text" class="form-control">
+                <input id="town" name="town" type="text" class="form-control" value="@getTown()" required>
             </div>
         </div>
 
@@ -63,17 +77,16 @@
             <label class="col-md-2 control-label" for="city">City</label>
 
             <div class="col-md-9">
-                <input id="city" name="city" type="text" class="form-control">
+                <input id="city" name="city" type="text" class="form-control" value="@getCity()" required>
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-11 text-right">
-                <button type="submit" class="btn btn-primary">Delete</button>
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </div>
     </fieldset>
 </form>
-
+}
 }

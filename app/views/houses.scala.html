@@ -1,8 +1,8 @@
 @(houses: List[models.House] = Nil, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 @contentPage(context = context, sidebarItems = sidebarItems) {
+@if(!houses.isEmpty) {
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
-        @if(!houses.isEmpty) {
         <tr>
             <th>#</th>
             <th>Family Name</th>
@@ -25,13 +25,13 @@
             <td>@house.postalCode</td>
             <td>@house.town</td>
             <td>@house.city</td>
-            <td><a href="@routes.Houses.editHouse(house.id)" class="glyphicon glyphicon-pencil"></a></td>
+            <td><a href="@routes.Houses.renderEditHousePage(house.id)" class="glyphicon glyphicon-pencil"></a></td>
         </tr>
-        }
-        } else {
-        <h4>There is no house in the system!</h4>
         }
     </table>
 </div>
-
+<a href="@routes.Houses.renderAddHousePage" class="btn btn-primary">Add a New House</a>
+} else {
+<h4>There is no house in the system!</h4>
+}
 }

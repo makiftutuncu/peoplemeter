@@ -13,11 +13,15 @@ object Houses extends Controller {
     Ok(views.html.houses(houses = houseList, context = request.context, sidebarItems = SidebarItems.activate("Houses")))
   }
 
-  def editHouse(id: Long) = Authenticated { implicit request =>
-    House.read(id) map { house: House =>
-      Ok(views.html.houseDetails(house = Option(house), context = request.context, sidebarItems = SidebarItems.activate("Houses")))
-    } getOrElse BadRequest
+  def renderEditHousePage(id: Long) = Authenticated { implicit request =>
+    Ok(views.html.houseDetails(house = House.read(id), context = request.context, sidebarItems = SidebarItems.activate("Houses")))
+  }
+
+  def renderAddHousePage = Authenticated { implicit request =>
+    Ok(views.html.houseDetails(isAddingHouse = true, context = request.context, sidebarItems = SidebarItems.activate("Houses")))
   }
 
   def addHouse = TODO
+
+  def editHouse(id: Long) = TODO
 }
