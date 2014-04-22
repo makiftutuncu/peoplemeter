@@ -24,4 +24,6 @@ object Houses extends Controller {
   def addHouse = TODO
 
   def editHouse(id: Long) = TODO
+
+  def deleteHouse(id: Long) = TODO
 }

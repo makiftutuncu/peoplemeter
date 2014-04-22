@@ -26,6 +26,11 @@
             <td>@house.town</td>
             <td>@house.city</td>
             <td><a href="@routes.Houses.renderEditHousePage(house.id)" class="glyphicon glyphicon-pencil"></a></td>
+            <td>
+                <form action="@routes.Houses.deleteHouse(house.id)" method="post">
+                    <a class="glyphicon glyphicon-remove" onclick="$(this).closest('form').submit();"></a>
+                </form>
+            </td>
         </tr>
         }
     </table>

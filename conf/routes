@@ -16,6 +16,7 @@ GET     /houses/:id                 controllers.Houses.renderEditHousePage(id: L
 GET     /addHouse                   controllers.Houses.renderAddHousePage
 POST    /addHouse                   controllers.Houses.addHouse
 POST    /editHouse/:id              controllers.Houses.editHouse(id: Long)
+POST    /deleteHouse/:id              controllers.Houses.deleteHouse(id: Long)
 
 GET     /people                     controllers.People.renderPage
 GET     /channels                   controllers.Channels.renderPage
