@@ -1,0 +1,66 @@
+@(person: Option[models.Person] = None, isAddingPerson: Boolean = false, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+
+@getName() = {@if(!person.isEmpty) {@person.get.name} else {}}
+@getBirthDate() = {@if(!person.isEmpty) {@person.get.birthDate} else {}}
+@isMale() = {@if(!person.isEmpty) {@person.get.isMale} else {}}
+@getHouseId() = {@if(!person.isEmpty) {@person.get.houseId} else {}}
+@getButtonNumber() = {@if(!person.isEmpty) {@person.get.buttonNumber} else {}}
+
+@getFormAction() = {@if(isAddingPerson) {@routes.People.addPerson} else {@routes.People.editPerson(person.get.id)}}
+
+@contentPage(context = context, sidebarItems = sidebarItems) {
+@if(!isAddingPerson && person.isEmpty) {
+<h4>Invalid person, cannot edit!</h4>
+} else {
+<form class="form-horizontal" action="@getFormAction()" method="post">
+    <fieldset>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="name">Name</label>
+
+            <div class="col-md-9">
+                <input id="name" name="name" type="text" class="form-control" value="@getName()" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="birthDate">Birth Date</label>
+
+            <div class="col-md-9">
+                <input id="birthDate" name="birthDate" type="text" class="form-control" value="@getBirthDate()" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="isMale">Gender</label>
+
+            <div class="col-md-9">
+                <input id="isMale" name="isMale" type="text" class="form-control" value="@isMale()" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="houseId">House #</label>
+
+            <div class="col-md-9">
+                <input id="houseId" name="houseId" type="text" class="form-control" value="@getHouseId()" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="buttonNumber">Button Number</label>
+
+            <div class="col-md-9">
+                <input id="buttonNumber" name="buttonNumber" type="text" class="form-control" value="@getButtonNumber()" required>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-11 text-right">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+}
+}

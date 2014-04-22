@@ -1,4 +1,38 @@
-@(context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+@(people: List[models.Person] = Nil, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 @contentPage(context = context, sidebarItems = sidebarItems) {
-Welcome to people!
+@if(!people.isEmpty) {
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Birth Date</th>
+            <th>Gender</th>
+            <th>House Id</th>
+            <th>Button Number</th>
+
+        </tr>
+        @for(person <- people) {
+        <tr>
+            <td>@person.id</td>
+            <td>@person.name</td>
+            <td>@person.birthDate</td>
+            <td>@person.isMale</td>
+            <td>@person.houseId</td>
+            <td>@person.buttonNumber</td>
+
+            <td><a href="" class="glyphicon glyphicon-pencil"></a></td>
+            <td>
+                <form action="" method="post">
+                    <a class="glyphicon glyphicon-remove" onclick="$(this).closest('form').submit();"></a>
+                </form>
+            </td>
+        </tr>
+        }
+    </table>
+</div>
+} else {
+<h4>There is no house in the system!</h4>
+}
+<a href="@routes.Houses.renderAddHousePage" class="btn btn-primary">Add a New House</a>
 }
