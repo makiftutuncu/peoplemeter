@@ -1,7 +1,8 @@
-@(context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+@(houses: List[models.House] = Nil, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 @contentPage(context = context, sidebarItems = sidebarItems) {
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
+        @if(!houses.isEmpty) {
         <tr>
             <th>#</th>
             <th>Family Name</th>
@@ -13,17 +14,23 @@
             <th>Town</th>
             <th>City</th>
         </tr>
+        @for(house <- houses) {
         <tr>
-            <td>Değer 1</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
-            <td>Değer 2</td>
+            <td>@house.id</td>
+            <td>@house.familyName</td>
+            <td>@house.district</td>
+            <td>@house.street</td>
+            <td>@house.buildingName</td>
+            <td>@house.doorNumber</td>
+            <td>@house.postalCode</td>
+            <td>@house.town</td>
+            <td>@house.city</td>
+            <td><a href="@routes.Houses.editHouse(house.id)" class="glyphicon glyphicon-pencil"></a></td>
         </tr>
+        }
+        } else {
+        <h4>There is no house in the system!</h4>
+        }
     </table>
 </div>
 

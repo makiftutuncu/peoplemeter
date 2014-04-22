@@ -11,6 +11,9 @@ POST    /login                      controllers.Login.submit
 POST    /logout                     controllers.Logout.logout
 
 GET     /houses                     controllers.Houses.renderPage
+GET     /houses/:id                 controllers.Houses.editHouse(id: Long)
+GET     /houses/add                 controllers.Houses.addHouse
+
 GET     /people                     controllers.People.renderPage
 GET     /channels                   controllers.Channels.renderPage
 GET     /stats                      controllers.Stats.renderPage

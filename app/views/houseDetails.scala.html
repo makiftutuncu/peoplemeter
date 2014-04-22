@@ -1,0 +1,4 @@
+@(house: Option[models.House] = None, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+@contentPage(context = context, sidebarItems = sidebarItems) {
+Editing house #@house.get.id
+}

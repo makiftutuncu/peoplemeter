@@ -110,6 +110,25 @@ object House {
   }
 
   /**
+   * Reads list of house from the database
+   *
+   * @return    A list of [[models.House]] if successful, Nil if not found or any error occurs
+   */
+  def read: List[House] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL(
+          """select id, family_name, district, street, building_name, door_number, postal_code, town, city from houses""").as(houseParser *)
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"House.read() - House reading failed, ${e.getMessage}")
+        Nil
+    }
+  }
+
+  /**
    * Deletes a house with given id from the database
    *
    * @param id  Id of the house
