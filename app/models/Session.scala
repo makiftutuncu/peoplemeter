@@ -2,10 +2,11 @@ package models
 
 import anorm._
 import anorm.SqlParser._
-import utilities.Generators
+import utilities.{JSONSerializable, Generators}
 import play.api.db.DB
 import play.api.Logger
 import play.api.Play.current
+import play.api.libs.json.{Json, JsValue}
 
 /**
  * Model of a session
@@ -13,7 +14,7 @@ import play.api.Play.current
  * @param id        Id of the session
  * @param accountId Id of the account to which session belongs
  */
-case class Session(id: String, accountId: Long)
+case class Session(id: String, accountId: Long) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Session]] acting as data access layer
@@ -120,6 +121,23 @@ object Session {
       case e: Exception =>
         Logger.error(s"Session.delete() - Session deleting failed for $id, ${e.getMessage}")
         false
+    }
+  }
+
+  implicit object SessionAsJSON extends JSONSerializable[Session]
+  {
+    def toJSON(session: Session): JsValue = Json.obj(
+      "id" -> session.id,
+      "accountId" -> session.accountId
+    )
+
+    def fromJSON(json: JsValue): Session =
+    {
+      ((json \ "id").asOpt[String], (json \ "accountId").asOpt[Long]) match
+      {
+        case (Some(id: String), Some(accountId: Long)) => Session(id, accountId)
+        case _ => throw new IllegalArgumentException("Invalid Session JSON!")
+      }
     }
   }
 }

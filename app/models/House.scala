@@ -5,6 +5,8 @@ import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Logger
 import play.api.Play.current
+import utilities.JSONSerializable
+import play.api.libs.json.{Json, JsValue}
 
 /**
  * A model for keeping a house
@@ -22,7 +24,7 @@ import play.api.Play.current
 case class House(id: Long, familyName: String,
                  district: String, street: String,
                  buildingName: String, doorNumber: String,
-                 postalCode: String, town: String, city: String)
+                 postalCode: String, town: String, city: String) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.House]] acting as data access layer
@@ -125,6 +127,46 @@ object House {
       case e: Exception =>
         Logger.error(s"House.delete() - House deleting failed for $id, ${e.getMessage}")
         false
+    }
+  }
+
+  implicit object HouseAsJSON extends JSONSerializable[House]
+  {
+    def toJSON(house: House): JsValue = Json.obj(
+      "id" -> house.id,
+      "familyName" -> house.familyName,
+      "district" -> house.district,
+      "street" -> house.street,
+      "buildingName" -> house.buildingName,
+      "doorNumber" -> house.doorNumber,
+      "postalCode" -> house.postalCode,
+      "town" -> house.town,
+      "city" -> house.city
+    )
+
+    def fromJSON(json: JsValue): House =
+    {
+      ((json \ "id").asOpt[Long],
+       (json \ "familyName").asOpt[String],
+       (json \ "district").asOpt[String],
+       (json \ "street").asOpt[String],
+       (json \ "buildingName").asOpt[String],
+       (json \ "doorNumber").asOpt[String],
+       (json \ "postalCode").asOpt[String],
+       (json \ "town").asOpt[String],
+       (json \ "city").asOpt[String]) match
+      {
+        case (Some(id: Long),
+              Some(familyName: String),
+              Some(district: String),
+              Some(street: String),
+              Some(buildingName: String),
+              Some(doorNumber: String),
+              Some(postalCode: String),
+              Some(town: String),
+              Some(city: String)) => House(id, familyName, district, street, buildingName, doorNumber, postalCode, town, city)
+        case _ => throw new IllegalArgumentException("Invalid House JSON!")
+      }
     }
   }
 }

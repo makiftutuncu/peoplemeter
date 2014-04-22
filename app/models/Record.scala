@@ -6,6 +6,8 @@ import java.util.Date
 import play.api.db.DB
 import play.api.Logger
 import play.api.Play.current
+import utilities.JSONSerializable
+import play.api.libs.json.{Json, JsValue}
 
 /**
  * A model for keeping a record
@@ -17,7 +19,7 @@ import play.api.Play.current
  * @param startTime     Start time of the record
  * @param endTime       End time of the record
  */
-case class Record(id: Long, houseId: Long, buttonNumber: Int, channelId: Long, startTime: Date, endTime: Date)
+case class Record(id: Long, houseId: Long, buttonNumber: Int, channelId: Long, startTime: Date, endTime: Date) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Record]] acting as data access layer
@@ -110,6 +112,37 @@ object Record {
       case e: Exception =>
         Logger.error(s"Record.delete() - Record deleting failed for $id, ${e.getMessage}")
         false
+    }
+  }
+
+  implicit object RecordAsJSON extends JSONSerializable[Record]
+  {
+    def toJSON(record: Record): JsValue = Json.obj(
+      "id" -> record.id,
+      "houseId" -> record.houseId,
+      "buttonNumber" -> record.buttonNumber,
+      "channelId" -> record.channelId,
+      "startTime" -> record.startTime,
+      "endTime" -> record.endTime
+    )
+
+    def fromJSON(json: JsValue): Record =
+    {
+      ((json \ "id").asOpt[Long],
+       (json \ "houseId").asOpt[Long],
+       (json \ "buttonNumber").asOpt[Int],
+       (json \ "channelId").asOpt[Long],
+       (json \ "startTime").asOpt[Date],
+       (json \ "endTime").asOpt[Date]) match
+      {
+        case (Some(id: Long),
+              Some(houseId: Long),
+              Some(buttonNumber: Int),
+              Some(channelId: Long),
+              Some(startTime: Date),
+              Some(endTime: Date)) => Record(id, houseId, buttonNumber, channelId, startTime, endTime)
+        case _ => throw new IllegalArgumentException("Invalid Record JSON!")
+      }
     }
   }
 }

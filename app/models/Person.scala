@@ -6,6 +6,8 @@ import java.util.Date
 import play.api.db.DB
 import play.api.Logger
 import play.api.Play.current
+import utilities.JSONSerializable
+import play.api.libs.json.{Json, JsValue}
 
 /**
  * A model for keeping a person
@@ -17,7 +19,7 @@ import play.api.Play.current
  * @param houseId       Id of house of the person
  * @param buttonNumber  Button number of the person on the remote controller
  */
-case class Person(id: Long, name: String, birthDate: Date, isMale: Boolean, houseId: Long, buttonNumber: Int)
+case class Person(id: Long, name: String, birthDate: Date, isMale: Boolean, houseId: Long, buttonNumber: Int) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Person]] acting as data access layer
@@ -108,6 +110,37 @@ object Person {
       case e: Exception =>
         Logger.error(s"Person.delete() - Person deleting failed for $id, ${e.getMessage}")
         false
+    }
+  }
+
+  implicit object PersonAsJSON extends JSONSerializable[Person]
+  {
+    def toJSON(person: Person): JsValue = Json.obj(
+      "id" -> person.id,
+      "name" -> person.name,
+      "birthDate" -> person.birthDate,
+      "isMale" -> person.isMale,
+      "houseId" -> person.houseId,
+      "buttonNumber" -> person.buttonNumber
+    )
+
+    def fromJSON(json: JsValue): Person =
+    {
+      ((json \ "id").asOpt[Long],
+       (json \ "name").asOpt[String],
+       (json \ "birthDate").asOpt[Date],
+       (json \ "isMale").asOpt[Boolean],
+       (json \ "houseId").asOpt[Long],
+       (json \ "buttonNumber").asOpt[Int]) match
+      {
+        case (Some(id: Long),
+              Some(name: String),
+              Some(birthDate: Date),
+              Some(isMale: Boolean),
+              Some(houseId: Long),
+              Some(buttonNumber: Int)) => Person(id, name, birthDate, isMale, houseId, buttonNumber)
+        case _ => throw new IllegalArgumentException("Invalid Person JSON!")
+      }
     }
   }
 }

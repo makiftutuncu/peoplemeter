@@ -6,6 +6,8 @@ import play.api.db.DB
 import anorm.~
 import play.api.Logger
 import play.api.Play.current
+import utilities.JSONSerializable
+import play.api.libs.json.{Json, JsValue}
 
 /**
  * A model for keeping a channel
@@ -14,7 +16,7 @@ import play.api.Play.current
  * @param name          Email address of the channel
  * @param logoFilePath  Path to logo image of the channel
  */
-case class Channel(id: Long, name: String, logoFilePath: String)
+case class Channel(id: Long, name: String, logoFilePath: String) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Channel]] acting as data access layer
@@ -99,6 +101,24 @@ object Channel {
       case e: Exception =>
         Logger.error(s"Channel.delete() - Channel deleting failed for $id, ${e.getMessage}")
         false
+    }
+  }
+
+  implicit object ChannelAsJSON extends JSONSerializable[Channel]
+  {
+    def toJSON(channel: Channel): JsValue = Json.obj(
+      "id" -> channel.id,
+      "name" -> channel.name,
+      "logoFilePath" -> channel.logoFilePath
+    )
+
+    def fromJSON(json: JsValue): Channel =
+    {
+      ((json \ "id").asOpt[Long], (json \ "name").asOpt[String], (json \ "logoFilePath").asOpt[String]) match
+      {
+        case (Some(id: Long), Some(name: String), Some(logoFilePath: String)) => Channel(id, name, logoFilePath)
+        case _ => throw new IllegalArgumentException("Invalid Channel JSON!")
+      }
     }
   }
 }

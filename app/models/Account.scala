@@ -5,7 +5,8 @@ import anorm.SqlParser._
 import play.api.db.DB
 import play.api.Logger
 import play.api.Play.current
-import utilities.Generators
+import utilities.{JSONSerializable, Generators}
+import play.api.libs.json.{JsValue, Json}
 
 /**
  * A model for keeping an account
@@ -14,7 +15,7 @@ import utilities.Generators
  * @param email     Email address of the account
  * @param password  Password of the account
  */
-case class Account(id: Long, email: String, password: String)
+case class Account(id: Long, email: String, password: String) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Account]] acting as data access layer
@@ -124,6 +125,24 @@ object Account {
       case e: Exception =>
         Logger.error(s"Account.delete() - Account deleting failed for $id, ${e.getMessage}")
         false
+    }
+  }
+
+  implicit object AccountAsJSON extends JSONSerializable[Account]
+  {
+    def toJSON(account: Account): JsValue = Json.obj(
+      "id" -> account.id,
+      "email" -> account.email,
+      "password" -> account.password
+    )
+
+    def fromJSON(json: JsValue): Account =
+    {
+      ((json \ "id").asOpt[Long], (json \ "email").asOpt[String], (json \ "password").asOpt[String]) match
+      {
+        case (Some(id: Long), Some(email: String), Some(password: String)) => Account(id, email, password)
+        case _ => throw new IllegalArgumentException("Invalid Account JSON!")
+      }
     }
   }
 }
