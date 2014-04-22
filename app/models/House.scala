@@ -88,6 +88,53 @@ object House {
   }
 
   /**
+   * Updates a house with given information on the database
+   *
+   * @param id            Id of the house which is an auto incremented number
+   * @param familyName    Name of the family living in the house
+   * @param district      District name in which the house is located
+   * @param street        Street name in which the house is located
+   * @param buildingName  Building name of the house
+   * @param doorNumber    Door number of the house
+   * @param postalCode    Postal code of the address at which the house is located
+   * @param town          Name of the town in which the house is located
+   * @param city          Name of the city in which the house is located
+   *
+   * @return              true if successfully deleted, false if any error occurs
+   */
+  def update(id: Long, familyName: String, district: String,
+             street: String, buildingName: String,
+             doorNumber: String, postalCode: String,
+             town: String, city: String): Boolean = {
+    try {
+      DB.withConnection { implicit c =>
+        val affectedRows = SQL(
+          """update houses
+             set family_name={familyName}, district={district},
+                 street={street}, building_name={buildingName},
+                 door_number={doorNumber}, postal_code={postalCode},
+                 town={town}, city={city}
+             where id={id}""")
+          .on("id" -> id, "familyName" -> familyName, "district" -> district,
+            "street" -> street, "buildingName" -> buildingName,
+            "doorNumber" -> doorNumber, "postalCode" -> postalCode,
+            "town" -> town, "city" -> city)
+          .executeUpdate()
+        val result: Boolean = affectedRows > 0
+        if(!result) {
+          Logger.error(s"House.update() - House update failed for $id, cannot update!")
+        }
+        result
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"House.update() - House update failed for id $id, ${e.getMessage}")
+        false
+    }
+  }
+
+  /**
    * Reads a house by given id from the database
    *
    * @param id  Id of the house
