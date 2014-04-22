@@ -26,7 +26,14 @@
             <label class="col-md-2 control-label" for="birthDate">Birth Date</label>
 
             <div class="col-md-9">
-                <input id="birthDate" name="birthDate" type="text" class="form-control" value="@getBirthDate()" required>
+                <div class="input-group date" id="birthDatePicker">
+
+                    <input id="birthDate" name="birthDate" type="text" class="form-control" value="@getBirthDate()"
+                           required readonly>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+                </div>
             </div>
         </div>
 
@@ -62,5 +69,6 @@
         </div>
     </fieldset>
 </form>
+
 }
 }
