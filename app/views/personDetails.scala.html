@@ -8,7 +8,10 @@
 
 @getFormAction() = {@if(isAddingPerson) {@routes.People.addPerson} else {@routes.People.editPerson(person.get.id)}}
 
-@contentPage(context = context, sidebarItems = sidebarItems) {
+@scripts() = {
+}
+
+@contentPage(context = context, scripts = scripts, sidebarItems = sidebarItems) {
 @if(!isAddingPerson && person.isEmpty) {
 <h4>Invalid person, cannot edit!</h4>
 } else {
@@ -26,8 +29,7 @@
             <label class="col-md-2 control-label" for="birthDate">Birth Date</label>
 
             <div class="col-md-9">
-                <div class="input-group date" id="birthDatePicker">
-
+                <div class="input-group">
                     <input id="birthDate" name="birthDate" type="text" class="form-control" value="@getBirthDate()"
                            required readonly>
                 <span class="input-group-addon">
@@ -69,6 +71,5 @@
         </div>
     </fieldset>
 </form>
-
 }
 }
