@@ -1,10 +1,11 @@
-@(person: Option[models.Person] = None, isAddingPerson: Boolean = false, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+@(person: Option[models.Person] = None, isAddingPerson: Boolean = false, houses: List[models.House] = Nil, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 
 @getName() = {@if(!person.isEmpty) {@person.get.name} else {}}
 @getBirthDate() = {@if(!person.isEmpty) {@person.get.birthDate} else {}}
-@isMale() = {@if(!person.isEmpty) {@person.get.isMale} else {}}
-@getHouseId() = {@if(!person.isEmpty) {@person.get.houseId} else {}}
-@getButtonNumber() = {@if(!person.isEmpty) {@person.get.buttonNumber} else {}}
+@isMale() = {@if(!person.isEmpty && person.get.isMale) {checked} else {}}
+@isFemale() = {@if(!person.isEmpty && !person.get.isMale) {checked} else {}}
+@isHouseIdSelected(id: Long) = {@if(!person.isEmpty && person.get.houseId == id) {selected} else {}}
+@isButtonNumberSelected(number: Int) = {@if(!person.isEmpty && person.get.buttonNumber == number) {selected} else {}}
 
 @getFormAction() = {@if(isAddingPerson) {@routes.People.addPerson} else {@routes.People.editPerson(person.get.id)}}
 
@@ -18,6 +19,7 @@
 @if(!isAddingPerson && person.isEmpty) {
 <h4>Invalid person, cannot edit!</h4>
 } else {
+<h3>@if(isAddingPerson && person.isEmpty) {Add a New Person} else {Edit Person}</h3>
 <form class="form-horizontal" action="@getFormAction()" method="post">
     <fieldset>
         <div class="form-group">
@@ -34,7 +36,7 @@
             <div class="col-md-9">
                 <div class="input-group">
                     <input id="birthDate" name="birthDate" type="text" class="form-control" value="@getBirthDate()"
-                           required>
+                           placeholder="YYYY-MM-DD" required>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar" id="birthDatePicker"></span>
                 </span>
@@ -45,28 +47,37 @@
         <div class="form-group">
             <label class="col-md-2 control-label" for="isMale">Gender</label>
 
-            <div class="col-md-4">
-                <input id="isMale" name="isMale" type="radio" class="form-control" value="true" required>Male
-            </div>
-            <div class="col-md-4">
-                <input id="isMale" name="isMale" type="radio" class="form-control" value="false" required checked>Female
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="houseId">House #</label>
-
-            <div class="col-md-9">
-                <input id="houseId" name="houseId" type="text" class="form-control" value="@getHouseId()" required>
+            <div class="col-md-9" id="isMale">
+                <div class="radio-inline">
+                    <input type="radio" name="isMale" value="true" @isMale() required>Male
+                </div>
+                <div class="radio-inline">
+                    <input type="radio" name="isMale" value="false" @isFemale() required>Female
+                </div>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-md-2 control-label" for="buttonNumber">Button Number</label>
+            <label class="col-md-2 control-label" for="houseId">House</label>
 
             <div class="col-md-9">
-                <input id="buttonNumber" name="buttonNumber" type="text" class="form-control" value="@getButtonNumber()"
-                       required>
+                <select id="houseId" name="houseId" class="form-control" required>
+                    @for(house <- houses) {
+                    <option value="@house.id" @isHouseIdSelected(house.id)>House of @house.familyName Family</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="buttonNumber">Dedicated RC Button</label>
+
+            <div class="col-md-9">
+                <select id="buttonNumber" name="buttonNumber" class="form-control" required>
+                    @for(i <- 1 to 9) {
+                    <option value="@i" @isButtonNumberSelected(i)>Button @i</option>
+                    }
+                </select>
             </div>
         </div>
 

@@ -17,13 +17,13 @@
             <td>@person.id</td>
             <td>@person.name</td>
             <td>@person.birthDate</td>
-            <td>@person.isMale</td>
-            <td>@person.houseId</td>
+            <td>@if(person.isMale) {Male} else {Female}</td>
+            <td><a href="@routes.Houses.renderEditHousePage(person.houseId)">@person.houseId</a></td>
             <td>@person.buttonNumber</td>
 
-            <td><a href="" class="glyphicon glyphicon-pencil"></a></td>
+            <td><a href="@routes.People.renderEditPersonPage(person.id)" class="glyphicon glyphicon-pencil"></a></td>
             <td>
-                <form action="" method="post">
+                <form action="@routes.People.deletePerson(person.id)" method="post">
                     <a class="glyphicon glyphicon-remove" onclick="$(this).closest('form').submit();"></a>
                 </form>
             </td>

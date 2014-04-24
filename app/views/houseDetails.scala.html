@@ -13,8 +13,9 @@
 
 @contentPage(context = context, sidebarItems = sidebarItems) {
 @if(!isAddingHouse && house.isEmpty) {
-<h4>Invalid house, cannot edit!</h4>
+<h4>Invalid house id, house not found!</h4>
 } else {
+<h3>@if(isAddingHouse && house.isEmpty) {Add a New House} else {Edit House}</h3>
 <form class="form-horizontal" action="@getFormAction()" method="post">
     <fieldset>
         <div class="form-group">

@@ -5,6 +5,7 @@ import utilities.{SidebarItems, Authenticated}
 import models.House
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.Logger
 
 /**
  * Houses controller which controls everything about managing houses
@@ -39,10 +40,10 @@ object Houses extends Controller {
     Ok(views.html.houseDetails(isAddingHouse = true, context = request.context, sidebarItems = SidebarItems.activate("Houses")))
   }
 
-  def addHouse = Authenticated { implicit request =>
+  def addHouse() = Authenticated { implicit request =>
     houseForm.bindFromRequest().fold(
       errors => {
-        // Log
+        Logger.error(s"Houses.addHouse() - House adding failed, invalid form data as ${errors.errorsAsJson}!")
         Redirect(routes.Houses.renderPage())
       },
       houseFormData => {
@@ -56,7 +57,7 @@ object Houses extends Controller {
           houseFormData.city) map {
           house: House => Redirect(routes.Houses.renderPage())
         } getOrElse {
-          // Log
+          Logger.error(s"Houses.addHouse() - House adding failed, cannot insert!")
           Redirect(routes.Houses.renderPage())
         }
       }
@@ -66,7 +67,7 @@ object Houses extends Controller {
   def editHouse(id: Long) = Authenticated { implicit request =>
     houseForm.bindFromRequest().fold(
       errors => {
-        // Log
+        Logger.error(s"Houses.editHouse() - House editing failed for id $id, invalid form data as ${errors.errorsAsJson}!")
         Redirect(routes.Houses.renderPage())
       },
       houseFormData => {
@@ -80,7 +81,7 @@ object Houses extends Controller {
           houseFormData.town,
           houseFormData.city)
         if(!result) {
-          // Log
+          Logger.error(s"Houses.editHouse() - House editing failed for id $id, cannot update!")
         }
         Redirect(routes.Houses.renderPage())
       }

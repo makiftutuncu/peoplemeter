@@ -127,7 +127,7 @@ object Person {
       DB.withConnection { implicit c =>
         val affectedRows = SQL(
           """update people
-             set name={name}, birth_date={birthDate}, is_male={isMale}, house_id={houseId}, button_number={buttonNumber})
+             set name={name}, birth_date={birthDate}, is_male={isMale}, house_id={houseId}, button_number={buttonNumber}
              where id={id}""")
           .on("id" -> id, "name" -> name, "birthDate" -> birthDate, "isMale" -> isMale, "houseId" -> houseId, "buttonNumber" -> buttonNumber)
           .executeUpdate()
