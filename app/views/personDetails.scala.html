@@ -24,7 +24,7 @@ $('#birthDate').datepicker();
 
 @contentPage(context = context, scripts = scripts, styles = styles, sidebarItems = sidebarItems) {
 @if(!isAddingPerson && person.isEmpty) {
-<h4>Invalid person, cannot edit!</h4>
+<h4>Invalid person id, person not found!</h4>
 } else {
 <h3>@if(isAddingPerson && person.isEmpty) {Add a New Person} else {Edit Person}</h3>
 <form class="form-horizontal" action="@getFormAction()" method="post">

@@ -1,4 +1,29 @@
-@(context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+@(channels: List[models.Channel] = Nil, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 @contentPage(context = context, sidebarItems = sidebarItems) {
-Welcome to channels!
+@if(!channels.isEmpty) {
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+        </tr>
+        @for(channel <- channels) {
+        <tr>
+            <td>@channel.id</td>
+            <td>@channel.name</td>
+
+            <td><a href="@routes.Channels.renderEditChannelPage(channel.id)" class="glyphicon glyphicon-pencil"></a></td>
+            <td>
+                <form action="@routes.Channels.deleteChannel(channel.id)" method="post">
+                    <a class="glyphicon glyphicon-remove" onclick="$(this).closest('form').submit();"></a>
+                </form>
+            </td>
+        </tr>
+        }
+    </table>
+</div>
+} else {
+<h4>There is no channel in the system!</h4>
+}
+<a href="@routes.Channels.renderAddChannelPage" class="btn btn-primary">Add a New Channel</a>
 }

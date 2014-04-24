@@ -13,7 +13,7 @@ import play.api.libs.json.{Json, JsValue}
  * A model for keeping a channel
  *
  * @param id            Id of the channel which is an auto incremented number
- * @param name          Email address of the channel
+ * @param name          Name of the channel
  */
 case class Channel(id: Long, name: String) extends PeoplemeterModel
 
@@ -78,6 +78,51 @@ object Channel {
       case e: Exception =>
         Logger.error(s"Channel.read() - Channel reading failed for $id, ${e.getMessage}")
         None
+    }
+  }
+
+  /**
+   * Reads list of channels from the database
+   *
+   * @return  A list of [[models.Channel]] if successful, Nil if not found or any error occurs
+   */
+  def read: List[Channel] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL(
+          """select id, name from channels""").as(channelParser *)
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Channel.read() - Channel reading failed, ${e.getMessage}")
+        Nil
+    }
+  }
+
+  /**
+   * Updates a channel with given information on the database
+   *
+   * @param id    Id of the channel which is an auto incremented number
+   * @param name  Name of the channel
+   *
+   * @return      true if successful, false if any error occurs
+   */
+  def update(id: Long, name: String): Boolean = {
+    try {
+      DB.withConnection { implicit c =>
+        val affectedRows = SQL("""update channels set name={name} where id={id}""").on("id" -> id, "name" -> name).executeUpdate()
+        val result: Boolean = affectedRows > 0
+        if(!result) {
+          Logger.error(s"Channel.update() - Channel update failed for id $id, cannot update!")
+        }
+        result
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Channel.update() - Channel update failed for id $id, ${e.getMessage}")
+        false
     }
   }
 

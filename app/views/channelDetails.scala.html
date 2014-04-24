@@ -1,0 +1,30 @@
+@(channel: Option[models.Channel] = None, isAddingChannel: Boolean = false, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+
+@getName() = {@if(!channel.isEmpty) {@channel.get.name} else {}}
+
+@getFormAction() = {@if(isAddingChannel) {@routes.Channels.addChannel} else {@routes.Channels.editChannel(channel.get.id)}}
+
+@contentPage(context = context, sidebarItems = sidebarItems) {
+@if(!isAddingChannel && channel.isEmpty) {
+<h4>Invalid channel id, channel not found!</h4>
+} else {
+<h3>@if(isAddingChannel && channel.isEmpty) {Add a New Channel} else {Edit Channel}</h3>
+<form class="form-horizontal" action="@getFormAction()" method="post">
+    <fieldset>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="name">Name</label>
+
+            <div class="col-md-9">
+                <input id="name" name="name" type="text" class="form-control" value="@getName()" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-11 text-right">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+}
+}

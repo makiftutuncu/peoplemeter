@@ -26,7 +26,14 @@ POST    /addPerson                  controllers.People.addPerson
 POST    /editPerson/:id             controllers.People.editPerson(id: Long)
 POST    /deletePerson/:id           controllers.People.deletePerson(id: Long)
 
+# Channel stuff
 GET     /channels                   controllers.Channels.renderPage
+GET     /channels/:id               controllers.Channels.renderEditChannelPage(id: Long)
+GET     /addChannel                 controllers.Channels.renderAddChannelPage
+POST    /addChannel                 controllers.Channels.addChannel
+POST    /editChannel/:id            controllers.Channels.editChannel(id: Long)
+POST    /deleteChannel/:id          controllers.Channels.deleteChannel(id: Long)
+
 GET     /stats                      controllers.Stats.renderPage
 
 # Map static resources from the /public folder to the /assets URL path
