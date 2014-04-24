@@ -10,9 +10,16 @@
 @getFormAction() = {@if(isAddingPerson) {@routes.People.addPerson} else {@routes.People.editPerson(person.get.id)}}
 
 @scripts() = {
+<!-- Bootstrap Datepicker JS -->
+<script src='@routes.Assets.at("js/bootstrap-datepicker.js")'></script>
+<script>
+$('#birthDate').datepicker();
+</script>
 }
 
 @styles() = {
+<!-- Bootstrap Datepicker CSS -->
+<link href='@routes.Assets.at("css/datepicker.css")' rel="stylesheet">
 }
 
 @contentPage(context = context, scripts = scripts, styles = styles, sidebarItems = sidebarItems) {
@@ -34,13 +41,7 @@
             <label class="col-md-2 control-label" for="birthDate">Birth Date</label>
 
             <div class="col-md-9">
-                <div class="input-group">
-                    <input id="birthDate" name="birthDate" type="text" class="form-control" value="@getBirthDate()"
-                           placeholder="YYYY-MM-DD" required>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar" id="birthDatePicker"></span>
-                </span>
-                </div>
+                <input class="form-control" type="text" id="birthDate" name="birthDate" value="@getBirthDate()" data-date-format="yyyy-mm-dd" data-date-viewmode="years" required>
             </div>
         </div>
 
@@ -62,6 +63,7 @@
 
             <div class="col-md-9">
                 <select id="houseId" name="houseId" class="form-control" required>
+                    <option value="">Select a House</option>
                     @for(house <- houses) {
                     <option value="@house.id" @isHouseIdSelected(house.id)>House of @house.familyName Family</option>
                     }
@@ -74,6 +76,7 @@
 
             <div class="col-md-9">
                 <select id="buttonNumber" name="buttonNumber" class="form-control" required>
+                    <option value="">Select a Button</option>
                     @for(i <- 1 to 9) {
                     <option value="@i" @isButtonNumberSelected(i)>Button @i</option>
                     }
