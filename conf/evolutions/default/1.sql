@@ -25,7 +25,6 @@ CREATE TABLE people (
 CREATE TABLE channels (
     id int(10) unsigned NOT NULL UNIQUE AUTO_INCREMENT,
     name varchar(128) NOT NULL,
-    logo_file_path varchar(255) NOT NULL,
     PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

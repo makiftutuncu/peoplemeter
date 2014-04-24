@@ -14,9 +14,8 @@ import play.api.libs.json.{Json, JsValue}
  *
  * @param id            Id of the channel which is an auto incremented number
  * @param name          Email address of the channel
- * @param logoFilePath  Path to logo image of the channel
  */
-case class Channel(id: Long, name: String, logoFilePath: String) extends PeoplemeterModel
+case class Channel(id: Long, name: String) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Channel]] acting as data access layer
@@ -26,37 +25,36 @@ object Channel {
    * A result set parser for channel records in database, maps records to a [[models.Channel]] object
    */
   val channelParser = {
-    get[Long]("id") ~ get[String]("name") ~ get[String]("logo_file_path") map {
-      case id ~ name ~ logoFilePath => Channel(id, name, logoFilePath)
+    get[Long]("id") ~ get[String]("name") map {
+      case id ~ name => Channel(id, name)
     }
   }
 
   /**
    * Creates a channel with given information and inserts it to the database
    *
-   * @param name          Email address of the channel
-   * @param logoFilePath  Path to logo image of the channel
+   * @param name  Name of the channel
    *
-   * @return              An optional [[models.Channel]] if successful, None if any error occurs
+   * @return      An optional [[models.Channel]] if successful, None if any error occurs
    */
-  def create(name: String, logoFilePath: String): Option[Channel] = {
+  def create(name: String): Option[Channel] = {
     try {
       DB.withConnection { implicit c =>
         val insertResult: Option[Long] = SQL(
-          """insert into channels (name, logo_file_path)
-             values ({name}, {logoFilePath})""")
-          .on("name" -> name, "logoFilePath" -> logoFilePath).executeInsert()
+          """insert into channels (name)
+             values ({name})""")
+          .on("name" -> name).executeInsert()
         if(!insertResult.isEmpty)
-          Option(Channel(insertResult.get, name, logoFilePath))
+          Option(Channel(insertResult.get, name))
         else {
-          Logger.error(s"Channel.create() - Channel creation failed for $name - $logoFilePath, cannot insert!")
+          Logger.error(s"Channel.create() - Channel creation failed for $name, cannot insert!")
           None
         }
       }
     }
     catch {
       case e: Exception =>
-        Logger.error(s"Channel.create() - Channel creation failed for $name - $logoFilePath, ${e.getMessage}")
+        Logger.error(s"Channel.create() - Channel creation failed for $name, ${e.getMessage}")
         None
     }
   }
@@ -72,7 +70,7 @@ object Channel {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, name, logo_file_path from channels
+          """select id, name from channels
              where id={id} limit 1""").on("id" -> id).as(channelParser singleOpt)
       }
     }
@@ -108,15 +106,14 @@ object Channel {
   {
     def toJSON(channel: Channel): JsValue = Json.obj(
       "id" -> channel.id,
-      "name" -> channel.name,
-      "logoFilePath" -> channel.logoFilePath
+      "name" -> channel.name
     )
 
     def fromJSON(json: JsValue): Channel =
     {
-      ((json \ "id").asOpt[Long], (json \ "name").asOpt[String], (json \ "logoFilePath").asOpt[String]) match
+      ((json \ "id").asOpt[Long], (json \ "name").asOpt[String]) match
       {
-        case (Some(id: Long), Some(name: String), Some(logoFilePath: String)) => Channel(id, name, logoFilePath)
+        case (Some(id: Long), Some(name: String)) => Channel(id, name)
         case _ => throw new IllegalArgumentException("Invalid Channel JSON!")
       }
     }
