@@ -19,7 +19,7 @@ object SidebarItems {
     SidebarItem(routes.Houses.renderPage(), "glyphicon-th-large", "Houses", isActive = false),
     SidebarItem(routes.People.renderPage(), "glyphicon-user", "People", isActive = false),
     SidebarItem(routes.Channels.renderPage(), "glyphicon-list", "Channels", isActive = false),
-    SidebarItem(routes.Stats.renderPage(), "glyphicon-stats", "Stats", isActive = false)
+    SidebarItem(routes.Stats.renderChannelsTab(), "glyphicon-stats", "Stats", isActive = false)
   )
 
   def activate(text: String): List[SidebarItem] = {
