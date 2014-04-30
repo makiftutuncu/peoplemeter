@@ -1,24 +1,13 @@
-@(context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil, tabItems: List[utilities.TabItem] = Nil)
+@(chartScript: Html = Html(""), context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil, tabItems: List[utilities.TabItem] = Nil)
 @tabItem(link: String, text: String, isActive: Boolean) = {
 <li @if(isActive) {class="active"} ><a href="@link">@text</a></li>
 }
 @scripts() = {
 <script src='@routes.Assets.at("js/Chart.min.js")'></script>
 <script>
-var data = {
-	labels : ["January","February","March","April","May","June","July"],
-	datasets : [
-		{
-			fillColor : "rgba(220,220,220,0.5)",
-			strokeColor : "rgba(220,220,220,1)",
-			data : [65,59,90,81,56,55,40]
-		}
-	]
-}
-    var ctx = $("#myChart").get(0).getContext("2d");
-//This will get the first returned node in the jQuery collection.
+var data = @chartScript
+var ctx = $("#myChart").get(0).getContext("2d");
 var myNewChart = new Chart(ctx).Bar(data);
-
 </script>
 }
 @contentPage(context = context, scripts = scripts, sidebarItems = sidebarItems) {

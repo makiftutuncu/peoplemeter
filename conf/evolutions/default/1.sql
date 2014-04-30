@@ -51,6 +51,14 @@ CREATE TABLE sessions (
     PRIMARY KEY(id)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 
+CREATE VIEW channel_stats_view AS (
+    SELECT records.id AS id,
+           channels.name AS name,
+           (records.end_time - records.start_time) AS duration
+    FROM channels, records
+    WHERE channels.id = records.channel_id
+);
+
 # --- !Downs
 DROP TABLE houses;
 DROP TABLE people;
@@ -58,3 +66,4 @@ DROP TABLE channels;
 DROP TABLE records;
 DROP TABLE accounts;
 DROP TABLE sessions;
+DROP VIEW channel_stats_view;
