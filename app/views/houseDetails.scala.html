@@ -1,5 +1,6 @@
 @(house: Option[models.House] = None, isAddingHouse: Boolean = false, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 
+@getDeviceId() = {@if(!house.isEmpty) {@house.get.deviceId} else {}}
 @getFamilyName() = {@if(!house.isEmpty) {@house.get.familyName} else {}}
 @getDistrict() = {@if(!house.isEmpty) {@house.get.district} else {}}
 @getStreet() = {@if(!house.isEmpty) {@house.get.street} else {}}
@@ -18,6 +19,14 @@
 <h3>@if(isAddingHouse && house.isEmpty) {Add a New House} else {Edit House}</h3>
 <form class="form-horizontal" action="@getFormAction()" method="post">
     <fieldset>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="deviceId">Device Id</label>
+
+            <div class="col-md-9">
+                <input id="deviceId" name="deviceId" type="text" class="form-control" value="@getDeviceId()" required>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="col-md-2 control-label" for="familyName">Family Name</label>
 

@@ -12,6 +12,7 @@ import play.api.libs.json.{Json, JsValue}
  * A model for keeping a house
  *
  * @param id            Id of the house which is an auto incremented number
+ * @param deviceId      Id of the peoplemeter device installed in the house
  * @param familyName    Name of the family living in the house
  * @param district      District name in which the house is located
  * @param street        Street name in which the house is located
@@ -21,9 +22,8 @@ import play.api.libs.json.{Json, JsValue}
  * @param town          Name of the town in which the house is located
  * @param city          Name of the city in which the house is located
  */
-case class House(id: Long, familyName: String,
-                 district: String, street: String,
-                 buildingName: String, doorNumber: String,
+case class House(id: Long, deviceId: String, familyName: String,
+                 district: String, street: String, buildingName: String, doorNumber: String,
                  postalCode: String, town: String, city: String) extends PeoplemeterModel
 
 /**
@@ -34,19 +34,18 @@ object House {
    * A result set parser for house records in database, maps records to a [[models.House]] object
    */
   val houseParser = {
-    get[Long]("id") ~ get[String]("family_name") ~
-    get[String]("district") ~ get[String]("street") ~
-    get[String]("building_name") ~ get[String]("door_number") ~
-    get[String]("postal_code") ~ get[String]("town") ~
-    get[String]("city") map {
-      case id ~ familyName ~ district ~ street ~ buildingName ~ doorNumber ~ postalCode ~ town ~ city =>
-        House(id, familyName, district, street, buildingName, doorNumber, postalCode, town, city)
+    get[Long]("id") ~ get[String]("device_id") ~ get[String]("family_name") ~
+    get[String]("district") ~ get[String]("street") ~ get[String]("building_name") ~ get[String]("door_number") ~
+    get[String]("postal_code") ~ get[String]("town") ~ get[String]("city") map {
+      case id ~ deviceId ~ familyName ~ district ~ street ~ buildingName ~ doorNumber ~ postalCode ~ town ~ city =>
+        House(id, deviceId, familyName, district, street, buildingName, doorNumber, postalCode, town, city)
     }
   }
 
   /**
    * Creates a house with given information and inserts it to the database
    *
+   * @param deviceId      Id of the peoplemeter device installed in the house
    * @param familyName    Name of the family living in the house
    * @param district      District name in which the house is located
    * @param street        Street name in which the house is located
@@ -58,22 +57,21 @@ object House {
    *
    * @return              An optional [[models.House]] if successful, None if any error occurs
    */
-  def create(familyName: String, district: String,
-             street: String, buildingName: String,
-             doorNumber: String, postalCode: String,
+  def create(deviceId: String, familyName: String, district: String,
+             street: String, buildingName: String, doorNumber: String, postalCode: String,
              town: String, city: String): Option[House] = {
     try {
       DB.withConnection { implicit c =>
         val insertResult: Option[Long] = SQL(
-          """insert into houses (family_name, district, street, building_name, door_number, postal_code, town, city)
-             values ({familyName}, {district}, {street}, {buildingName}, {doorNumber}, {postalCode}, {town}, {city})""")
-          .on("familyName" -> familyName, "district" -> district,
+          """insert into houses (device_id, family_name, district, street, building_name, door_number, postal_code, town, city)
+             values ({deviceId}, {familyName}, {district}, {street}, {buildingName}, {doorNumber}, {postalCode}, {town}, {city})""")
+          .on("deviceId" -> deviceId, "familyName" -> familyName, "district" -> district,
               "street" -> street, "buildingName" -> buildingName,
               "doorNumber" -> doorNumber, "postalCode" -> postalCode,
               "town" -> town, "city" -> city)
           .executeInsert()
         if(!insertResult.isEmpty)
-          Option(House(insertResult.get, familyName, district, street, buildingName, doorNumber, postalCode, town, city))
+          Option(House(insertResult.get, deviceId, familyName, district, street, buildingName, doorNumber, postalCode, town, city))
         else {
           Logger.error(s"House.create() - House creation failed for $familyName, cannot insert!")
           None
@@ -91,6 +89,7 @@ object House {
    * Updates a house with given information on the database
    *
    * @param id            Id of the house which is an auto incremented number
+   * @param deviceId      Id of the peoplemeter device installed in the house
    * @param familyName    Name of the family living in the house
    * @param district      District name in which the house is located
    * @param street        Street name in which the house is located
@@ -102,20 +101,19 @@ object House {
    *
    * @return              true if successfully deleted, false if any error occurs
    */
-  def update(id: Long, familyName: String, district: String,
-             street: String, buildingName: String,
-             doorNumber: String, postalCode: String,
+  def update(id: Long, deviceId: String, familyName: String, district: String,
+             street: String, buildingName: String, doorNumber: String, postalCode: String,
              town: String, city: String): Boolean = {
     try {
       DB.withConnection { implicit c =>
         val affectedRows = SQL(
           """update houses
-             set family_name={familyName}, district={district},
+             set device_id={deviceId}, family_name={familyName}, district={district},
                  street={street}, building_name={buildingName},
                  door_number={doorNumber}, postal_code={postalCode},
                  town={town}, city={city}
              where id={id}""")
-          .on("id" -> id, "familyName" -> familyName, "district" -> district,
+          .on("id" -> id, "deviceId" -> deviceId, "familyName" -> familyName, "district" -> district,
             "street" -> street, "buildingName" -> buildingName,
             "doorNumber" -> doorNumber, "postalCode" -> postalCode,
             "town" -> town, "city" -> city)
@@ -145,13 +143,35 @@ object House {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, family_name, district, street, building_name, door_number, postal_code, town, city from houses
+          """select id, device_id, family_name, district, street, building_name, door_number, postal_code, town, city from houses
              where id={id} limit 1""").on("id" -> id).as(houseParser singleOpt)
       }
     }
     catch {
       case e: Exception =>
         Logger.error(s"House.read() - House reading failed for $id, ${e.getMessage}")
+        None
+    }
+  }
+
+  /**
+   * Reads a house by given device id from the database
+   *
+   * @param deviceId  Id of the peoplemeter device installed in the house
+   *
+   * @return          An optional [[models.House]] if successful, None if any error occurs
+   */
+  def read(deviceId: String): Option[House] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL(
+          """select id, device_id, family_name, district, street, building_name, door_number, postal_code, town, city from houses
+             where device_id={deviceId} limit 1""").on("deviceId" -> deviceId).as(houseParser singleOpt)
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"House.read() - House reading failed for device id $deviceId, ${e.getMessage}")
         None
     }
   }
@@ -165,7 +185,7 @@ object House {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, family_name, district, street, building_name, door_number, postal_code, town, city from houses""").as(houseParser *)
+          """select id, device_id, family_name, district, street, building_name, door_number, postal_code, town, city from houses""").as(houseParser *)
       }
     }
     catch {
@@ -200,6 +220,7 @@ object House {
   {
     def toJSON(house: House): JsValue = Json.obj(
       "id" -> house.id,
+      "deviceId" -> house.deviceId,
       "familyName" -> house.familyName,
       "district" -> house.district,
       "street" -> house.street,
@@ -213,6 +234,7 @@ object House {
     def fromJSON(json: JsValue): House =
     {
       ((json \ "id").asOpt[Long],
+       (json \ "deviceId").asOpt[String],
        (json \ "familyName").asOpt[String],
        (json \ "district").asOpt[String],
        (json \ "street").asOpt[String],
@@ -223,6 +245,7 @@ object House {
        (json \ "city").asOpt[String]) match
       {
         case (Some(id: Long),
+              Some(deviceId: String),
               Some(familyName: String),
               Some(district: String),
               Some(street: String),
@@ -230,7 +253,7 @@ object House {
               Some(doorNumber: String),
               Some(postalCode: String),
               Some(town: String),
-              Some(city: String)) => House(id, familyName, district, street, buildingName, doorNumber, postalCode, town, city)
+              Some(city: String)) => House(id, deviceId, familyName, district, street, buildingName, doorNumber, postalCode, town, city)
         case _ => throw new IllegalArgumentException("Invalid House JSON!")
       }
     }

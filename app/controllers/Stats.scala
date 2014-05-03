@@ -21,12 +21,13 @@ object Stats extends Controller {
     val initialStats: List[(String, Double)] = DB.withConnection { implicit c =>
       SQL("""SELECT name, SUM(duration) AS duration FROM channel_stats_view GROUP BY name""").as(channelStatsParser *)
     }
-    val totalDuration: Double = initialStats.foldLeft(0.0)(_ + _._2)
-    val channelStats: List[(String, Double)] = initialStats.map(s => (s._1, (s._2 / totalDuration) * 100))
-    val labels: String = channelStats.map(s => s._1).mkString("\"", "\",\"", "\"")
-    val data: String = channelStats.map(s => s._2).mkString(",")
-    val script: Html = Html(
-      s"""{
+    if(!initialStats.isEmpty) {
+      val totalDuration: Double = initialStats.foldLeft(0.0)(_ + _._2)
+      val channelStats: List[(String, Double)] = initialStats.map(s => (s._1, (s._2 / totalDuration) * 100))
+      val labels: String = channelStats.map(s => s._1).mkString("\"", "\",\"", "\"")
+      val data: String = channelStats.map(s => s._2).mkString(",")
+      val script: Html = Html(
+        s"""{
         labels : [$labels],
         datasets : [{
           fillColor : "rgba(16,16,255,0.6)",
@@ -34,7 +35,10 @@ object Stats extends Controller {
           data : [$data]
         }]
       }""")
-    Ok(views.html.stats(chartScript = script, context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Channels")))
+      Ok(views.html.stats(chartScript = script, context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Channels")))
+    } else {
+      Ok(views.html.stats(messageIfEmpty = "No channel stats found!", context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Channels")))
+    }
   }
 
   def renderAgeTab = Authenticated { implicit request =>
@@ -52,12 +56,13 @@ object Stats extends Controller {
                  records.button_number = people.button_number
            GROUP BY age""").as(ageStatsParser *)
     }
-    val totalCount: Long = initialStats.foldLeft(0.asInstanceOf[Long])(_ + _._1)
-    val ageStats: List[(Double, Int)] = initialStats.map(s => ((s._1.asInstanceOf[Double] / totalCount) * 100, s._2))
-    val labels: String = ageStats.map(s => s._2).mkString("\"", "\",\"", "\"")
-    val data: String = ageStats.map(s => s._1).mkString(",")
-    val script: Html = Html(
-      s"""{
+    if(!initialStats.isEmpty) {
+      val totalCount: Long = initialStats.foldLeft(0.asInstanceOf[Long])(_ + _._1)
+      val ageStats: List[(Double, Int)] = initialStats.map(s => ((s._1.asInstanceOf[Double] / totalCount) * 100, s._2))
+      val labels: String = ageStats.map(s => s._2).mkString("\"", "\",\"", "\"")
+      val data: String = ageStats.map(s => s._1).mkString(",")
+      val script: Html = Html(
+        s"""{
         labels : [$labels],
         datasets : [{
           fillColor : "rgba(16,16,255,0.6)",
@@ -65,7 +70,10 @@ object Stats extends Controller {
           data : [$data]
         }]
       }""")
-    Ok(views.html.stats(chartScript = script, context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Age")))
+      Ok(views.html.stats(chartScript = script, context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Age")))
+    } else {
+      Ok(views.html.stats(messageIfEmpty = "No age stats found!", context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Age")))
+    }
   }
 
   def renderGenderTab = Authenticated { implicit request =>
@@ -81,12 +89,13 @@ object Stats extends Controller {
            WHERE records.house_id = people.house_id AND records.button_number = people.button_number
            GROUP BY gender""").as(genderStatsParser *)
     }
-    val totalCount: Long = initialStats.foldLeft(0.asInstanceOf[Long])(_ + _._1)
-    val genderStats: List[(Double, Boolean)] = initialStats.map(s => ((s._1.asInstanceOf[Double] / totalCount) * 100, s._2))
-    val labels: String = genderStats.map(s => if(s._2) "Male" else "Female").mkString("\"", "\",\"", "\"")
-    val data: String = genderStats.map(s => s._1).mkString(",")
-    val script: Html = Html(
-      s"""{
+    if(!initialStats.isEmpty) {
+      val totalCount: Long = initialStats.foldLeft(0.asInstanceOf[Long])(_ + _._1)
+      val genderStats: List[(Double, Boolean)] = initialStats.map(s => ((s._1.asInstanceOf[Double] / totalCount) * 100, s._2))
+      val labels: String = genderStats.map(s => if(s._2) "Male" else "Female").mkString("\"", "\",\"", "\"")
+      val data: String = genderStats.map(s => s._1).mkString(",")
+      val script: Html = Html(
+        s"""{
         labels : [$labels],
         datasets : [{
           fillColor : "rgba(16,16,255,0.6)",
@@ -94,6 +103,9 @@ object Stats extends Controller {
           data : [$data]
         }]
       }""")
-    Ok(views.html.stats(chartScript = script, context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Gender")))
+      Ok(views.html.stats(chartScript = script, context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Gender")))
+    } else {
+      Ok(views.html.stats(messageIfEmpty = "No gender stats found!", context = request.context, sidebarItems = SidebarItems.activate("Stats"), tabItems = TabItems.activate("Gender")))
+    }
   }
 }

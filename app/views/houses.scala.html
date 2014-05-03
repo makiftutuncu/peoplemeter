@@ -5,6 +5,7 @@
     <table class="table table-bordered table-hover">
         <tr>
             <th>#</th>
+            <th>Device Id</th>
             <th>Family Name</th>
             <th>District</th>
             <th>Street</th>
@@ -17,6 +18,7 @@
         @for(house <- houses) {
         <tr>
             <td>@house.id</td>
+            <td>@house.deviceId.take(6)...</td>
             <td>@house.familyName</td>
             <td>@house.district</td>
             <td>@house.street</td>

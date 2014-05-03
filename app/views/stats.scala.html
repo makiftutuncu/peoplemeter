@@ -1,14 +1,16 @@
-@(chartScript: Html = Html(""), context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil, tabItems: List[utilities.TabItem] = Nil)
+@(messageIfEmpty: String = "", chartScript: Html = Html(""), context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil, tabItems: List[utilities.TabItem] = Nil)
 @tabItem(link: String, text: String, isActive: Boolean) = {
 <li @if(isActive) {class="active"} ><a href="@link">@text</a></li>
 }
 @scripts() = {
+@if(messageIfEmpty.isEmpty) {
 <script src='@routes.Assets.at("js/Chart.min.js")'></script>
 <script>
 var data = @chartScript
 var ctx = $("#myChart").get(0).getContext("2d");
 var myNewChart = new Chart(ctx).Bar(data);
 </script>
+} else {}
 }
 @contentPage(context = context, scripts = scripts, sidebarItems = sidebarItems) {
 <ul class="nav nav-pills">
@@ -16,8 +18,11 @@ var myNewChart = new Chart(ctx).Bar(data);
     @tabItem(item.link.url, item.text, item.isActive)
     }
 </ul>
+@if(!messageIfEmpty.isEmpty) {
+<h4>@messageIfEmpty</h4>
+} else {
 <div class="col-md-9 col-md-offset-3">
     <canvas id="myChart" width="400" height="400"></canvas>
 </div>
-
+}
 }

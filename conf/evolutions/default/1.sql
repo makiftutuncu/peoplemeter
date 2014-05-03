@@ -1,6 +1,7 @@
 # --- !Ups
 CREATE TABLE houses (
     id int(10) unsigned NOT NULL UNIQUE AUTO_INCREMENT,
+    device_id char(32) NOT NULL,
     family_name varchar(128) NOT NULL,
     district varchar(128) NOT NULL,
     street varchar(128) NOT NULL,

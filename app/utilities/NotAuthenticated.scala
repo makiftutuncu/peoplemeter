@@ -5,7 +5,7 @@ import scala.concurrent.Future
 import controllers.routes
 
 /**
-  * A custom Action that allows only authenticated requests
+  * A custom Action that allows only not authenticated requests
   */
 object NotAuthenticated extends ActionBuilder[Request] with Results {
   def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[SimpleResult]) = {

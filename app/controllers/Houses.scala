@@ -16,6 +16,7 @@ object Houses extends Controller {
    */
   val houseForm: Form[HouseFormData] = Form(
     mapping(
+      "deviceId" -> nonEmptyText(32, 32),
       "familyName" -> nonEmptyText,
       "district" -> nonEmptyText,
       "street" -> nonEmptyText,
@@ -47,7 +48,8 @@ object Houses extends Controller {
         Redirect(routes.Houses.renderPage())
       },
       houseFormData => {
-        House.create(houseFormData.familyName,
+        House.create(houseFormData.deviceId,
+          houseFormData.familyName,
           houseFormData.district,
           houseFormData.street,
           houseFormData.buildingName,
@@ -72,6 +74,7 @@ object Houses extends Controller {
       },
       houseFormData => {
         val result: Boolean = House.update(id,
+          houseFormData.deviceId,
           houseFormData.familyName,
           houseFormData.district,
           houseFormData.street,
@@ -97,6 +100,7 @@ object Houses extends Controller {
 /**
  * A model of house form
  *
+ * @param deviceId      Id of the peoplemeter device installed in the house
  * @param familyName    Name of the family living in the house
  * @param district      District name in which the house is located
  * @param street        Street name in which the house is located
@@ -106,4 +110,4 @@ object Houses extends Controller {
  * @param town          Name of the town in which the house is located
  * @param city          Name of the city in which the house is located
  */
-case class HouseFormData(familyName: String, district: String, street: String, buildingName: String, doorNumber: String, postalCode: String, town: String, city: String)
+case class HouseFormData(deviceId: String, familyName: String, district: String, street: String, buildingName: String, doorNumber: String, postalCode: String, town: String, city: String)

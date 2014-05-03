@@ -5,9 +5,9 @@
 # Main
 GET     /                           controllers.Application.index
 
+# Login and logout stuff
 GET     /login                      controllers.Login.renderPage
 POST    /login                      controllers.Login.submit
-
 POST    /logout                     controllers.Logout.logout
 
 # House stuff
@@ -34,9 +34,13 @@ POST    /addChannel                 controllers.Channels.addChannel
 POST    /editChannel/:id            controllers.Channels.editChannel(id: Long)
 POST    /deleteChannel/:id          controllers.Channels.deleteChannel(id: Long)
 
+# Stats stuff
 GET     /stats/channels             controllers.Stats.renderChannelsTab
-GET     /stats/age             controllers.Stats.renderAgeTab
-GET     /stats/gender             controllers.Stats.renderGenderTab
+GET     /stats/age                  controllers.Stats.renderAgeTab
+GET     /stats/gender               controllers.Stats.renderGenderTab
+
+# External JSON API
+POST    /addRecord                  controllers.Records.addRecord
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
