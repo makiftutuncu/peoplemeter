@@ -53,7 +53,7 @@ object Record {
       DB.withConnection { implicit c =>
         val insertResult: Option[Long] = SQL(
           """insert into records (house_id, button_number, channel_id, start_time, end_time)
-             values ({familyName}, {district}, {street}, {buildingName}, {doorNumber}, {postalCode}, {town}, {city})""")
+             values ({houseId}, {buttonNumber}, {channelId}, {startTime}, {endTime})""")
           .on("houseId" -> houseId, "buttonNumber" -> buttonNumber,
               "channelId" -> channelId, "startTime" -> startTime, "endTime" -> endTime)
           .executeInsert()
