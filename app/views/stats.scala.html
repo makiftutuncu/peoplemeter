@@ -8,7 +8,13 @@
 <script>
 var data = @chartScript
 var ctx = $("#myChart").get(0).getContext("2d");
-var myNewChart = new Chart(ctx).Bar(data);
+var myNewChart = new Chart(ctx).Bar(data, {
+    scaleOverlay : true,
+    scaleOverride : true,
+    scaleSteps : 20,
+    scaleStepWidth : 5,
+    scaleStartValue : 0
+});
 </script>
 } else {}
 }
