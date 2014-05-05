@@ -16,7 +16,8 @@ object Channels extends Controller {
    */
   val channelForm: Form[ChannelFormData] = Form(
     mapping(
-      "name" -> nonEmptyText
+      "name" -> nonEmptyText,
+      "logoPosition" -> number(1, 4)
     )(ChannelFormData.apply)(ChannelFormData.unapply)
   )
 
@@ -40,7 +41,7 @@ object Channels extends Controller {
         Redirect(routes.Channels.renderPage())
       },
       channelFormData => {
-        Channel.create(channelFormData.name) map {
+        Channel.create(channelFormData.name, channelFormData.logoPosition) map {
           channel: Channel => Redirect(routes.Channels.renderPage())
         } getOrElse {
           Logger.error(s"Channels.addChannel() - Channel adding failed, cannot insert!")
@@ -57,7 +58,7 @@ object Channels extends Controller {
         Redirect(routes.Channels.renderPage())
       },
       channelFormData => {
-        val result: Boolean = Channel.update(id, channelFormData.name)
+        val result: Boolean = Channel.update(id, channelFormData.name, channelFormData.logoPosition)
         if(!result) {
           Logger.error(s"Channels.editChannel() - Channel editing failed for id $id, cannot update!")
         }
@@ -75,6 +76,7 @@ object Channels extends Controller {
 /**
  * A model of channel form
  *
- * @param name  Name of the channel
+ * @param name          Name of the channel
+ * @param logoPosition  Position of logo of the channel (1: top-left, 2: top-right, 3: bottom-left, 4: bottom-right)
  */
-case class ChannelFormData(name: String)
+case class ChannelFormData(name: String, logoPosition: Int)

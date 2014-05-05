@@ -1,4 +1,7 @@
 @(channels: List[models.Channel] = Nil, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
+@getChannelLogoPosition(logoPosition: Int) = {
+@if(logoPosition == 1) {Top-left} else {@if(logoPosition == 2) {Top-right} else {@if(logoPosition == 3) {Bottom-left} else {@if(logoPosition == 4) {Bottom-right}}}}
+}
 @contentPage(context = context, sidebarItems = sidebarItems) {
 @if(!channels.isEmpty) {
 <div class="table-responsive">
@@ -6,11 +9,13 @@
         <tr>
             <th>#</th>
             <th>Name</th>
+            <th>Logo Position</th>
         </tr>
         @for(channel <- channels) {
         <tr>
             <td>@channel.id</td>
             <td>@channel.name</td>
+            <td>@getChannelLogoPosition(channel.logoPosition)</td>
 
             <td><a href="@routes.Channels.renderEditChannelPage(channel.id)" class="glyphicon glyphicon-pencil"></a></td>
             <td>

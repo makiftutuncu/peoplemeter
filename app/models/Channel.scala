@@ -14,8 +14,9 @@ import play.api.libs.json.{Json, JsValue}
  *
  * @param id            Id of the channel which is an auto incremented number
  * @param name          Name of the channel
+ * @param logoPosition  Position of logo of the channel (1: top-left, 2: top-right, 3: bottom-left, 4: bottom-right)
  */
-case class Channel(id: Long, name: String) extends PeoplemeterModel
+case class Channel(id: Long, name: String, logoPosition: Int) extends PeoplemeterModel
 
 /**
  * Companion object of [[models.Channel]] acting as data access layer
@@ -25,27 +26,28 @@ object Channel {
    * A result set parser for channel records in database, maps records to a [[models.Channel]] object
    */
   val channelParser = {
-    get[Long]("id") ~ get[String]("name") map {
-      case id ~ name => Channel(id, name)
+    get[Long]("id") ~ get[String]("name") ~ get[Int]("logo_position") map {
+      case id ~ name ~ logoPosition => Channel(id, name, logoPosition)
     }
   }
 
   /**
    * Creates a channel with given information and inserts it to the database
    *
-   * @param name  Name of the channel
+   * @param name          Name of the channel
+   * @param logoPosition  Position of logo of the channel (1: top-left, 2: top-right, 3: bottom-left, 4: bottom-right)
    *
-   * @return      An optional [[models.Channel]] if successful, None if any error occurs
+   * @return              An optional [[models.Channel]] if successful, None if any error occurs
    */
-  def create(name: String): Option[Channel] = {
+  def create(name: String, logoPosition: Int): Option[Channel] = {
     try {
       DB.withConnection { implicit c =>
         val insertResult: Option[Long] = SQL(
-          """insert into channels (name)
-             values ({name})""")
-          .on("name" -> name).executeInsert()
+          """insert into channels (name, logo_position)
+             values ({name}, {logoPosition})""")
+          .on("name" -> name, "logoPosition" -> logoPosition).executeInsert()
         if(!insertResult.isEmpty)
-          Option(Channel(insertResult.get, name))
+          Option(Channel(insertResult.get, name, logoPosition))
         else {
           Logger.error(s"Channel.create() - Channel creation failed for $name, cannot insert!")
           None
@@ -70,7 +72,7 @@ object Channel {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, name from channels
+          """select id, name, logo_position from channels
              where id={id} limit 1""").on("id" -> id).as(channelParser singleOpt)
       }
     }
@@ -90,7 +92,7 @@ object Channel {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, name from channels""").as(channelParser *)
+          """select id, name, logo_position from channels""").as(channelParser *)
       }
     }
     catch {
@@ -103,15 +105,16 @@ object Channel {
   /**
    * Updates a channel with given information on the database
    *
-   * @param id    Id of the channel which is an auto incremented number
-   * @param name  Name of the channel
+   * @param id            Id of the channel which is an auto incremented number
+   * @param name          Name of the channel
+   * @param logoPosition  Position of logo of the channel (1: top-left, 2: top-right, 3: bottom-left, 4: bottom-right)
    *
-   * @return      true if successful, false if any error occurs
+   * @return              true if successful, false if any error occurs
    */
-  def update(id: Long, name: String): Boolean = {
+  def update(id: Long, name: String, logoPosition: Int): Boolean = {
     try {
       DB.withConnection { implicit c =>
-        val affectedRows = SQL("""update channels set name={name} where id={id}""").on("id" -> id, "name" -> name).executeUpdate()
+        val affectedRows = SQL("""update channels set name={name}, logo_position={logoPosition} where id={id}""").on("id" -> id, "name" -> name, "logoPosition" -> logoPosition).executeUpdate()
         val result: Boolean = affectedRows > 0
         if(!result) {
           Logger.error(s"Channel.update() - Channel update failed for id $id, cannot update!")
@@ -151,14 +154,15 @@ object Channel {
   {
     def toJSON(channel: Channel): JsValue = Json.obj(
       "id" -> channel.id,
-      "name" -> channel.name
+      "name" -> channel.name,
+      "logoPosition" -> channel.logoPosition
     )
 
     def fromJSON(json: JsValue): Channel =
     {
-      ((json \ "id").asOpt[Long], (json \ "name").asOpt[String]) match
+      ((json \ "id").asOpt[Long], (json \ "name").asOpt[String], (json \ "logoPosition").asOpt[Int]) match
       {
-        case (Some(id: Long), Some(name: String)) => Channel(id, name)
+        case (Some(id: Long), Some(name: String), Some(logoPosition: Int)) => Channel(id, name, logoPosition)
         case _ => throw new IllegalArgumentException("Invalid Channel JSON!")
       }
     }
