@@ -95,6 +95,66 @@ object Record {
   }
 
   /**
+   * Reads the last record from the database
+   *
+   * @param houseId       Id of the house to which this record belongs
+   * @param buttonNumber  Button number of the person to which this record belongs
+   * @param channelId     Id of the channel being watched during the time of the record
+   *
+   * @return              An optional [[models.Record]] if successful, None if not found or any error occurs
+   */
+  def readLast(houseId: Long, buttonNumber: Int, channelId: Long): Option[Record] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL(
+          """select id, house_id, button_number, channel_id, start_time, end_time from records
+             where id=(select max(id) from records) AND house_id={houseId} AND button_number={buttonNumber} AND channel_id={channelId}
+             limit 1""").on("houseId" -> houseId, "buttonNumber" -> buttonNumber, "channelId" -> channelId)
+          .as(recordParser singleOpt)
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Record.readLast() - Record reading failed, ${e.getMessage}")
+        None
+    }
+  }
+
+  /**
+   * Updates a record with given information on the database
+   *
+   * @param id            Id of the record which is an auto incremented number
+   * @param houseId       Id of the house to which this record belongs
+   * @param buttonNumber  Button number of the person to which this record belongs
+   * @param channelId     Id of the channel being watched during the time of the record
+   * @param startTime     Start time of the record
+   * @param endTime       End time of the record
+   *
+   * @return              true if successful, false if any error occurs
+   */
+  def update(id: Long, houseId: Long, buttonNumber: Int, channelId: Long, startTime: Date, endTime: Date): Boolean = {
+    try {
+      DB.withConnection { implicit c =>
+        val affectedRows = SQL(
+          """update records set house_id={houseId}, button_number={buttonNumber},
+             channel_id={channelId}, start_time={startTime}, end_time={endTime} where id={id}""")
+          .on("id" -> id, "houseId" -> houseId, "buttonNumber" -> buttonNumber,
+            "channelId" -> channelId, "startTime" -> startTime, "endTime" -> endTime).executeUpdate()
+        val result: Boolean = affectedRows > 0
+        if(!result) {
+          Logger.error(s"Record.update() - Record update failed for id $id, cannot update!")
+        }
+        result
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Record.update() - Record update failed for id $id, ${e.getMessage}")
+        false
+    }
+  }
+
+  /**
    * Deletes a record with given id from the database
    *
    * @param id  Id of the record
