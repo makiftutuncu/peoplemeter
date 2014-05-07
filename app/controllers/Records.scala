@@ -8,7 +8,7 @@ import java.util.Date
 object Records extends Controller {
   private def create(deviceId: String, record: Record): SimpleResult = {
     House.read(deviceId) map { house =>
-      if(house.id == record.id) {
+      if(house.id == record.houseId) {
         Record.create(record.houseId, record.buttonNumber, record.channelId, record.startTime, record.endTime) map { r =>
           Ok
         } getOrElse BadRequest("Error creating record!")
@@ -18,7 +18,7 @@ object Records extends Controller {
 
   private def updateEndTime(deviceId: String, record: Record, newEndTime: Date): SimpleResult = {
     House.read(deviceId) map { house =>
-      if(house.id == record.id) {
+      if(house.id == record.houseId) {
         if(Record.update(record.id, record.houseId, record.buttonNumber, record.channelId, record.startTime, newEndTime)) {
           Ok
         } else  BadRequest("Error updating record!")

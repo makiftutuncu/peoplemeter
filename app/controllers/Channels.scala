@@ -8,6 +8,7 @@ import play.api.Logger
 import models.{House, Channel}
 import play.api.libs.json.JsValue
 import play.api.http.MimeTypes
+import java.io.File
 
 /**
  * Channels controller which controls everything about managing channels
@@ -75,27 +76,28 @@ object Channels extends Controller {
   }
 
   def getChannelList = Action { implicit request =>
-    request.body.asJson.fold(BadRequest("Invalid request!"))({ json =>
-      (json \ "deviceId").asOpt[String].fold(BadRequest("Invalid JSON!"))({ deviceId =>
-        House.read(deviceId).fold(BadRequest("Invalid device id!"))({ house =>
+    request.body.asJson map { json =>
+      (json \ "deviceId").asOpt[String] map { deviceId =>
+        House.read(deviceId) map { house =>
           val channelListJSON: List[JsValue] = Channel.read.map(Channel.ChannelAsJSON.toJSON)
           Ok(channelListJSON.mkString("[",",","]")).as(MimeTypes.JSON)
-        })
-      })
-    })
+        } getOrElse BadRequest("Invalid device id!")
+      } getOrElse   BadRequest("Invalid JSON!")
+    } getOrElse     BadRequest("Invalid request!")
   }
 
   def getChannelLogo(id: Long) = Action { implicit request =>
-    request.body.asJson.fold(BadRequest("Invalid request!"))({ json =>
-      (json \ "deviceId").asOpt[String].fold(BadRequest("Invalid JSON!"))({ deviceId =>
-        House.read(deviceId).fold(BadRequest("Invalid device id!"))({ house =>
-          Channel.read(id).fold(BadRequest("Invalid channel id!"))({ channel =>
-            // TODO: Send logo image
-            Ok
-          })
-        })
-      })
-    })
+    request.body.asJson map { json =>
+      (json \ "deviceId").asOpt[String] map { deviceId =>
+        House.read(deviceId) map { house =>
+          Channel.read(id) map { channel =>
+            val file: File = new File(s"channel_logos/${channel.id}.png")
+            if(file.exists()) Ok.sendFile(file)
+            else              BadRequest("Invalid channel id!")
+          } getOrElse         BadRequest("Invalid channel id!")
+        } getOrElse           BadRequest("Invalid device id!")
+      } getOrElse             BadRequest("Invalid JSON!")
+    } getOrElse               BadRequest("Invalid request!")
   }
 }
 
