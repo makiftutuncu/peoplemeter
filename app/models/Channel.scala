@@ -73,7 +73,7 @@ object Channel {
       DB.withConnection { implicit c =>
         SQL(
           """select id, name, logo_position from channels
-             where id={id} limit 1""").on("id" -> id).as(channelParser singleOpt)
+             where id={id} AND id!=-1 limit 1""").on("id" -> id).as(channelParser singleOpt)
       }
     }
     catch {
@@ -92,7 +92,7 @@ object Channel {
     try {
       DB.withConnection { implicit c =>
         SQL(
-          """select id, name, logo_position from channels""").as(channelParser *)
+          """select id, name, logo_position from channels WHERE id!=-1""").as(channelParser *)
       }
     }
     catch {

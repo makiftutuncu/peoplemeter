@@ -7,6 +7,9 @@ INSERT INTO houses (id, device_id, family_name, district, street, building_name,
 (1, 'a3d6471be6a4459a87d9d70b9fcd754d', 'Hacihalil', 'Sogukkuyu Mah.', 'Girne Bulvari', 'Onur Apt.', '12', '35000', 'Bayrakli', 'Izmir'),
 (2, '7b970ec12c3d4b1e8eaf16c9c26c4539', 'Tutuncu', 'Karapinar Mah.', 'B149 Sok.', 'Tutuncu Apt.', '12', '16300', 'Yildirim', 'Bursa');
 
+INSERT INTO channels (id, name, logo_position) VALUES
+(-1, 'Other', 1);
+
 INSERT INTO people (id, name, birth_date, is_male, house_id, button_number) VALUES
 (1, 'Ezgi Hacihalil', '1992-03-13', 0, 1, 1),
 (2, 'Mehmet Akif Tutuncu', '1991-03-23', 1, 2, 1);
