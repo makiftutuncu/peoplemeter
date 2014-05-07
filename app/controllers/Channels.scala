@@ -5,7 +5,9 @@ import utilities.{SidebarItems, Authenticated}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.Logger
-import models.Channel
+import models.{House, Channel}
+import play.api.libs.json.JsValue
+import play.api.http.MimeTypes
 
 /**
  * Channels controller which controls everything about managing channels
@@ -41,12 +43,12 @@ object Channels extends Controller {
         Redirect(routes.Channels.renderPage())
       },
       channelFormData => {
-        Channel.create(channelFormData.name, channelFormData.logoPosition) map {
-          channel: Channel => Redirect(routes.Channels.renderPage())
-        } getOrElse {
+        Channel.create(channelFormData.name, channelFormData.logoPosition).fold({
           Logger.error(s"Channels.addChannel() - Channel adding failed, cannot insert!")
           Redirect(routes.Channels.renderPage())
-        }
+        })({
+          channel: Channel => Redirect(routes.Channels.renderPage())
+        })
       }
     )
   }
@@ -70,6 +72,30 @@ object Channels extends Controller {
   def deleteChannel(id: Long) = Authenticated { implicit request =>
     Channel.delete(id)
     Redirect(routes.Channels.renderPage())
+  }
+
+  def getChannelList = Action { implicit request =>
+    request.body.asJson.fold(BadRequest("Invalid request!"))({ json =>
+      (json \ "deviceId").asOpt[String].fold(BadRequest("Invalid JSON!"))({ deviceId =>
+        House.read(deviceId).fold(BadRequest("Invalid device id!"))({ house =>
+          val channelListJSON: List[JsValue] = Channel.read.map(Channel.ChannelAsJSON.toJSON)
+          Ok(channelListJSON.mkString("[",",","]")).as(MimeTypes.JSON)
+        })
+      })
+    })
+  }
+
+  def getChannelLogo(id: Long) = Action { implicit request =>
+    request.body.asJson.fold(BadRequest("Invalid request!"))({ json =>
+      (json \ "deviceId").asOpt[String].fold(BadRequest("Invalid JSON!"))({ deviceId =>
+        House.read(deviceId).fold(BadRequest("Invalid device id!"))({ house =>
+          Channel.read(id).fold(BadRequest("Invalid channel id!"))({ channel =>
+            // TODO: Send logo image
+            Ok
+          })
+        })
+      })
+    })
   }
 }
 

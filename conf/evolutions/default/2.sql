@@ -4,11 +4,12 @@ INSERT INTO accounts(id, email, password)
 VALUES (1, "admin@peoplemeter.com", "ba3253876aed6bc22d4a6ff53d8406c6ad864195ed144ab5c87621b6c233b548baeae6956df346ec8c17f5ea10f35ee3cbc514797ed7ddd3145464e2a0bab413");
 
 INSERT INTO channels (id, name, logo_position) VALUES
-(1, 'Trt', 1),
+(1, 'Trt', 2),
 (2, 'Atv', 1),
 (3, 'Show Tv', 1),
 (4, 'Kanal D', 1),
-(5, 'Fox', 1);
+(5, 'Fox', 1),
+(6, 'Star Tv', 2);
 
 INSERT INTO houses (id, device_id, family_name, district, street, building_name, door_number, postal_code, town, city) VALUES
 (1, 'a3d6471be6a4459a87d9d70b9fcd754d', 'Hacihalil', 'Sogukkuyu Mah.', 'Girne Bulvari', 'Onur Apt.', '12', '35000', 'Bayrakli', 'Izmir'),

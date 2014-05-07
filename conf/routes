@@ -33,6 +33,8 @@ GET     /addChannel                 controllers.Channels.renderAddChannelPage
 POST    /addChannel                 controllers.Channels.addChannel
 POST    /editChannel/:id            controllers.Channels.editChannel(id: Long)
 POST    /deleteChannel/:id          controllers.Channels.deleteChannel(id: Long)
+POST    /getChannelList             controllers.Channels.getChannelList
+POST    /getChannelLogo/:id         controllers.Channels.getChannelLogo(id: Long)
 
 # Stats stuff
 GET     /stats/channels             controllers.Stats.renderChannelsTab
