@@ -1,6 +1,7 @@
 @(channel: Option[models.Channel] = None, isAddingChannel: Boolean = false, context: utilities.Context, sidebarItems: List[utilities.SidebarItem] = Nil)
 
 @getName() = {@if(!channel.isEmpty) {@channel.get.name} else {}}
+@isLogoPositionSelected(logoPosition: Int) = {@if(!channel.isEmpty && channel.get.logoPosition == logoPosition) {selected} else {}}
 
 @getFormAction() = {@if(isAddingChannel) {@routes.Channels.addChannel} else {@routes.Channels.editChannel(channel.get.id)}}
 
@@ -9,7 +10,7 @@
 <h4>Invalid channel id, channel not found!</h4>
 } else {
 <h3>@if(isAddingChannel && channel.isEmpty) {Add a New Channel} else {Edit Channel}</h3>
-<form class="form-horizontal" action="@getFormAction()" method="post">
+<form class="form-horizontal" action="@getFormAction()" method="post" enctype="multipart/form-data">
     <fieldset>
         <div class="form-group">
             <label class="col-md-2 control-label" for="name">Name</label>
@@ -19,16 +20,26 @@
             </div>
         </div>
 
+        @if(isAddingChannel && channel.isEmpty) {
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="logo">Logo</label>
+
+            <div class="col-md-9">
+                <input id="logo" name="logo" type="file" class="form-control" required>
+            </div>
+        </div>
+        }
+
         <div class="form-group">
             <label class="col-md-2 control-label" for="logoPosition">Logo Position</label>
 
             <div class="col-md-9">
                 <select id="logoPosition" name="logoPosition" class="form-control" required>
                     <option value="">Select a Position</option>
-                    <option value="1">Top-left</option>
-                    <option value="2">Top-right</option>
-                    <option value="3">Bottom-left</option>
-                    <option value="4">Bottom-right</option>
+                    <option value="1" @isLogoPositionSelected(1)>Top-left</option>
+                    <option value="2" @isLogoPositionSelected(2)>Top-right</option>
+                    <option value="3" @isLogoPositionSelected(3)>Bottom-left</option>
+                    <option value="4" @isLogoPositionSelected(4)>Bottom-right</option>
                 </select>
             </div>
         </div>

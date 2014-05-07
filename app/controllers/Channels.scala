@@ -37,19 +37,35 @@ object Channels extends Controller {
     Ok(views.html.channelDetails(isAddingChannel = true, context = request.context, sidebarItems = SidebarItems.activate("Channel")))
   }
 
-  def addChannel() = Authenticated { implicit request =>
+  def addChannel() = Authenticated(parse.multipartFormData) { implicit request =>
     channelForm.bindFromRequest().fold(
       errors => {
         Logger.error(s"Channels.addChannel() - Channel adding failed, invalid form data as ${errors.errorsAsJson}!")
         Redirect(routes.Channels.renderPage())
       },
       channelFormData => {
-        Channel.create(channelFormData.name, channelFormData.logoPosition).fold({
+        Channel.create(channelFormData.name, channelFormData.logoPosition) map { channel =>
+          request.body.file("logo") map { logo =>
+            logo.contentType map { contentType =>
+              if(contentType == "image/png") {
+                logo.ref.moveTo(new File(s"public/channel_logos/${channel.id}.png"))
+              } else {
+                Logger.error("Channels.addChannel() - Channel adding failed, invalid logo image format!")
+                Channel.delete(channel.id)
+              }
+            } getOrElse {
+              Logger.error("Channels.addChannel() - Channel adding failed, invalid logo image format!")
+              Channel.delete(channel.id)
+            }
+          } getOrElse {
+            Logger.error("Channels.addChannel() - Channel adding failed, no logo image is specified!")
+            Channel.delete(channel.id)
+          }
+          Redirect(routes.Channels.renderPage())
+        } getOrElse {
           Logger.error(s"Channels.addChannel() - Channel adding failed, cannot insert!")
           Redirect(routes.Channels.renderPage())
-        })({
-          channel: Channel => Redirect(routes.Channels.renderPage())
-        })
+        }
       }
     )
   }
@@ -72,6 +88,7 @@ object Channels extends Controller {
 
   def deleteChannel(id: Long) = Authenticated { implicit request =>
     Channel.delete(id)
+    new File(s"public/channel_logos/$id.png").delete()
     Redirect(routes.Channels.renderPage())
   }
 
@@ -91,7 +108,7 @@ object Channels extends Controller {
       (json \ "deviceId").asOpt[String] map { deviceId =>
         House.read(deviceId) map { house =>
           Channel.read(id) map { channel =>
-            val file: File = new File(s"channel_logos/${channel.id}.png")
+            val file: File = new File(s"public/channel_logos/${channel.id}.png")
             if(file.exists()) Ok.sendFile(file)
             else              BadRequest("Invalid channel id!")
           } getOrElse         BadRequest("Invalid channel id!")

@@ -9,12 +9,14 @@
         <tr>
             <th>#</th>
             <th>Name</th>
+            <th>Logo</th>
             <th>Logo Position</th>
         </tr>
         @for(channel <- channels) {
         <tr>
             <td>@channel.id</td>
             <td>@channel.name</td>
+            <td><img src='@routes.Assets.at("channel_logos/" + channel.id + ".png")' alt="@channel.name logo"></td>
             <td>@getChannelLogoPosition(channel.logoPosition)</td>
 
             <td><a href="@routes.Channels.renderEditChannelPage(channel.id)" class="glyphicon glyphicon-pencil"></a></td>
