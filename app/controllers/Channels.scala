@@ -48,7 +48,14 @@ object Channels extends Controller {
           request.body.file("logo") map { logo =>
             logo.contentType map { contentType =>
               if(contentType == "image/png") {
-                logo.ref.moveTo(new File(s"public/channel_logos/${channel.id}.png"))
+                try {
+                  logo.ref.moveTo(new File(s"public/channel_logos/${channel.id}.png"), replace = true)
+                } catch {
+                  case e: Exception => {
+                    Logger.error("Channels.addChannel() - Channel adding failed, cannot move file! " + e.getMessage)
+                    Channel.delete(channel.id)
+                  }
+                }
               } else {
                 Logger.error("Channels.addChannel() - Channel adding failed, invalid logo image format!")
                 Channel.delete(channel.id)
