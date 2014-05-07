@@ -97,25 +97,42 @@ object Record {
   /**
    * Reads the last record from the database
    *
-   * @param houseId       Id of the house to which this record belongs
-   * @param buttonNumber  Button number of the person to which this record belongs
-   * @param channelId     Id of the channel being watched during the time of the record
-   *
-   * @return              An optional [[models.Record]] if successful, None if not found or any error occurs
+   * @return  An optional [[models.Record]] if successful, None if not found or any error occurs
    */
-  def readLast(houseId: Long, buttonNumber: Int, channelId: Long): Option[Record] = {
+  def readLast: Option[Record] = {
     try {
       DB.withConnection { implicit c =>
         SQL(
           """select id, house_id, button_number, channel_id, start_time, end_time from records
-             where id=(select max(id) from records) AND house_id={houseId} AND button_number={buttonNumber} AND channel_id={channelId}
-             limit 1""").on("houseId" -> houseId, "buttonNumber" -> buttonNumber, "channelId" -> channelId)
-          .as(recordParser singleOpt)
+             where id=(select max(id) from records) limit 1""").as(recordParser singleOpt)
       }
     }
     catch {
       case e: Exception =>
         Logger.error(s"Record.readLast() - Record reading failed, ${e.getMessage}")
+        None
+    }
+  }
+
+  /**
+   * Reads the last record with given house id from the database
+   *
+   * @param houseId   Id of the house to which this record belongs
+   *
+   * @return          An optional [[models.Record]] if successful, None if not found or any error occurs
+   */
+  def readLastByHouseId(houseId: Long): Option[Record] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL(
+          """select id, house_id, button_number, channel_id, start_time, end_time from records
+             where id=(select max(id) from records where house_id={houseId}) limit 1""").on("houseId" -> houseId)
+          .as(recordParser singleOpt)
+      }
+    }
+    catch {
+      case e: Exception =>
+        Logger.error(s"Record.readLastByHouseId() - Record reading failed for house id $houseId, ${e.getMessage}")
         None
     }
   }
